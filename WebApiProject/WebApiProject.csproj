@@ -87,6 +87,11 @@
     <Content Include="Global.asax" />
     <Content Include="Views\css\bootstrap.css" />
     <Content Include="Views\css\bootstrap.min.css" />
+    <Content Include="Views\css\kendo.common.min.css" />
+    <Content Include="Views\css\kendo.mobile.all.min.css" />
+    <Content Include="Views\css\kendo.mobile.extended.css" />
+    <Content Include="Views\css\kendo.silver.extended.css" />
+    <Content Include="Views\css\kendo.silver.min.css" />
     <Content Include="Views\css\styles.css" />
     <Content Include="Views\index.html" />
     <Content Include="Views\js\bootstrap.js" />

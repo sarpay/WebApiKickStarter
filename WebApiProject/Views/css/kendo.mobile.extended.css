@@ -1,0 +1,84 @@
+﻿.km-flat {
+    font-family: 'Open Sans', HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.km-flat .km-content {
+    color: #515967;
+    /*-webkit-background-clip: border-box, border-box;
+    background-clip: border-box, border-box;*/
+    background-color: rgb(243, 243, 244);
+    background-image: url('textures/brushed-metal.png'),linear-gradient(to bottom,rgba(255,255,255,0.6) 0,rgba(255,255,255,0.6) 100%);
+    background-position: 50% 50%;
+    background-repeat: repeat;
+    
+    border-bottom-color: rgb(219, 219, 222);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-image-outset: 0px;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-left-color: rgb(219, 219, 222);
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-right-color: rgb(219, 219, 222);
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-top-color: rgb(219, 219, 222);
+    border-top-style: solid;
+    border-top-width: 1px;
+    box-shadow: none;
+    box-sizing: content-box;
+    
+}
+
+.km-flat .km-button {
+    background-color: rgb(243, 243, 244);
+}
+
+.km-flat .km-button.km-state-active {
+    background-color: rgb(238, 53, 36);
+}
+
+.km-flat .km-rowinsert, 
+.km-flat .km-state-active, 
+.km-flat .km-scroller-pull, 
+.km-flat .km-loader:before, 
+.km-flat .k-slider-selection, 
+.km-flat .km-touch-scrollbar, 
+.km-flat .km-pages .km-current-page, 
+.km-flat .k-slider .k-draghandle, 
+.km-flat .k-slider .k-draghandle:hover, 
+.km-flat .km-tabstrip .km-state-active, 
+.km-flat .km-scroller-refresh.km-load-more, 
+.km-flat .km-popup .k-state-hover, 
+.km-flat .km-popup .k-state-focused, 
+.km-flat .km-popup .k-state-selected, 
+.km-flat .km-actionsheet>li>a:active, 
+.km-flat .km-actionsheet>li>a:hover, 
+.km-flat li.km-state-active .km-listview-link, 
+.km-flat li.km-state-active .km-listview-label, 
+.km-flat .km-listview-label input[type=radio]:checked, 
+.km-flat .km-listview-label input[type=checkbox]:checked {
+    background-color: rgb(238, 53, 36);
+}
+
+/*.k-upload-files {
+    line-height: 25px;
+}*/
+
+#uploadDiv div.k-header {
+    border-radius: 4px;
+}
+
+.km-listview > li {
+    cursor: pointer;
+}
