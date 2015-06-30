@@ -17,16 +17,20 @@ namespace WebApiProject.Controllers
     {
         private DataModel db = new DataModel();
 
-        //POST: api/new_shopper?action=insert
-        [Route("api/newShopper")]
+
+        //*********************************************
+        // POST QUERIES USING STORED PROCEDURES
+        //*********************************************
+
+        // [URI: api/new-shopper?action=insert], [VIEW: new-shopper.html]
+        [Route("api/new-shopper")]
         [HttpPost]
         public string NewShopper(
             int acct_id,
             string name,
             byte? gender_ix,
             bool opt_in,
-            string action = null
-            )
+            string action = null)
         {
             SqlParameter[] sp = {
                 new SqlParameter() {
@@ -60,13 +64,22 @@ namespace WebApiProject.Controllers
                 "dbo.newShopper @AccountID, @Name, @GenderIX, @OptIn", sp);
 
             return string.Format("Acct. Id: {0}, Name: {1}, Gender: {2}, Opt-In: {3}, Action: {4}", acct_id, name, gender_ix, opt_in, action);
+            
+            //return new string[] { "value1", "value2" };
             //return result;
         }
 
-        // GET: api/getShoppers
-        [Route("api/getShoppers")]
+
+        //*********************************************
+        // GET QUERIES USING STORED PROCEDURES
+        //*********************************************
+
+        // [URI: api/shoppers], [VIEW: shoppers.html]
+        [Route("api/shoppers")]
         public IEnumerable<getShoppers> GetShoppersFromView()
         {
+            //try
+            //{
             SqlParameter[] sp = {
                 new SqlParameter() {
                     ParameterName = "GenderIX",
@@ -82,31 +95,30 @@ namespace WebApiProject.Controllers
                 }
             };
 
-            //return db.Database.SqlQuery<Shoppers_Result>(
+            //var results = db.Database.SqlQuery<getShoppers>(
             //    "dbo.getShoppers @GenderIX, @OptIn", sp)
             //    .ToList();
 
             // ---------- OR ----------
 
-            // This REQUIRES Shoppers_Result DbSet DEFINED IN DataModel.cs
-            return db.getShoppers.SqlQuery(
+            // This REQUIRES getShoppers DbSet DEFINED IN DataModel.cs
+            var results = db.getShoppers.SqlQuery(
                 "dbo.getShoppers @GenderIX, @OptIn", sp)
                 .ToList();
 
-            //return new string[] { "value1", "value2" };
+            return results;
+
+            //}
+            //catch (Exception e)
+            //{
+            //    IEnumerable<getShoppers> sequenceOfFoos = new getShoppers[] { new getShoppers() { ID = 0 }, new getShoppers() { Email = e.Message } };
+            //    return sequenceOfFoos;
+            //}
+            
         }
 
-
-        // GET: api/Shoppers
-        [Route("api/Shoppers")]
-        public IQueryable<Shoppers> GetShoppersFromTable()
-        {
-            return db.Shoppers;
-        }
-
-
-        // GET: api/getShoppers/1
-        [Route("api/getShoppers/{acct_id:int}")]
+        // [URI: api/shopper/1], [VIEW: shopper.html]
+        [Route("api/shopper/{acct_id}")]
         public IEnumerable<getShoppers> GetShopperFromView(int acct_id)
         {
 
@@ -119,6 +131,12 @@ namespace WebApiProject.Controllers
                 }
             };
 
+            //var results = db.Database.SqlQuery<getShoppers>(
+            //    "dbo.getShopper @AccountID", sp)
+            //    .ToList();
+
+            // ---------- OR ----------
+
             var results = db.getShoppers.SqlQuery(
                 "dbo.getShopper @AccountID", sp)
                 .ToList();
@@ -127,17 +145,28 @@ namespace WebApiProject.Controllers
         }
 
 
-        // GET: api/Shoppers/1
-        [Route("api/Shoppers/{acct_id:int}")]
-        [ResponseType(typeof(Shoppers))]
-        public IHttpActionResult GetShopperFromTable(int acct_id)
+        //*********************************************
+        // GET QUERIES ON TABLES
+        //*********************************************
+
+        // [URI: api/genders], [VIEW: genders.html]
+        [Route("api/genders")]
+        public IQueryable<Genders> GetGendersFromTable()
         {
-            Shoppers shoppers = db.Shoppers.Find(acct_id);
-            if (shoppers == null)
-            {
-                return NotFound();
-            }
-            return Ok(shoppers);
+            return db.Genders;
+        }
+
+        // [URI: api/gender/1], [VIEW: gender.html]
+        [Route("api/gender/{ix}")]
+        [ResponseType(typeof(Genders))]
+        public IHttpActionResult GetGendersFromTable(byte? ix)
+        {
+            Genders genders = db.Genders.Find(ix);
+            //if (genders == null)
+            //{
+            //    return  NotFound(); //returns a 404 error
+            //}
+            return Ok(genders);
         }
 
 

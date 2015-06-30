@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Get-Shoppers</title>
+    <meta charset="utf-8">
+
+    <link href="css/kendo.common.min.css" rel="stylesheet">
+    <link href="css/kendo.silver.min.css" rel="stylesheet">
+    <link href="css/kendo.silver.extended.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,800,700' rel='stylesheet' type='text/css'>
+
+    <script src="js/lib/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="js/lib/kendo.web.min.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+    <div id="msg"></div>
+
+    <div id="content" class="k-content">
+
+        <div id="grid"></div>
+
+        <!-- http://demos.telerik.com/kendo-ui/web/styling/icons.html -->
+        <script type="text/x-kendo-template" id="toolbar_template">
+            <div class="toolbar">
+                <div class="grid-title-div">
+                    <span class="grid-title-span">GET ALL SHOPPERS</span>
+                </div>
+                <div style="float: right;">
+                    <label class="search-label" for="searchbox">Search:</label>
+                    <input type="search" id="searchbox" class="k-input k-textbox" style="width: 150px" />
+                    <a class="k-button k-button-icontext k-grid-ClearSearch" style="visibility: hidden" href="\#"><span class="k-icon k-i-funnel-clear"></span>Clear</a>
+                </div>
+            </div>
+        </script>
+
+    </div>
+
+    <script src="js/global.js" type="text/javascript"></script>
+    <script src="js/shoppers.js" type="text/javascript"></script>
+
+</body>
+</html>
