@@ -26,7 +26,7 @@ namespace WebApiProject.Controllers
         [Route("api/purchases")]
         [HttpPost]
         public object[] GetPurchases(
-            int good_id,
+            int? good_id,
             byte? gender_ix)
         {
             //System.Threading.Thread.Sleep(2000);
@@ -65,6 +65,10 @@ namespace WebApiProject.Controllers
             {
                 dict.Add("Result", "ERROR");
                 dict.Add("ErrMsg", "APP: " + x.ToString());
+            }
+            finally
+            {
+                AdoNet.SqlDisconnect();
             }
 
             resultsList.Add(dict);
