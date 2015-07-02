@@ -114,14 +114,14 @@ function gridInit(jsonData) {
             datasource.filter({
                 logic: 'or',
                 filters: [
-                    //{
-                    //    field: 'IX',
-                    //    operator: 'contains',
-                    //    value: searchText
-                    //},
                     {
-                        field: 'Text',
-                        operator: 'startswith',
+                        field: 'ShopperName',
+                        operator: 'contains',
+                        value: searchText
+                    },
+                    {
+                        field: 'ShopperEmail',
+                        operator: 'contains',
                         value: searchText
                     }
                 ]

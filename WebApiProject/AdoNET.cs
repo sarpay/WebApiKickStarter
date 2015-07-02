@@ -75,7 +75,7 @@ namespace WebApiProject
         {
             SqlParam = new SqlParameter();
 
-            if (!(fieldLength == 0))
+            if (fieldLength != 0)
             {
                 SqlParam = SqlCmd.Parameters.Add(paramName, dbType, fieldLength);
             }
