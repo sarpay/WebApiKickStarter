@@ -76,5 +76,6 @@
     <Build Include="dbo\Stored Procedures\newAccount.sql" />
     <Build Include="dbo\Stored Procedures\newPurchase.sql" />
     <Build Include="dbo\Stored Procedures\newShopper.sql" />
+    <Build Include="dbo\Stored Procedures\getPurchases.sql" />
   </ItemGroup>
 </Project>

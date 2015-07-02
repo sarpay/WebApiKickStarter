@@ -95,7 +95,9 @@
     <Content Include="Views\css\Silver\loading-image.gif" />
     <Content Include="Views\css\Silver\sprite.png" />
     <Content Include="Views\css\styles.css" />
+    <Content Include="Views\js\purchases.js" />
     <Content Include="Views\new-shopper.html" />
+    <Content Include="Views\purchases.html" />
     <Content Include="Views\shopper.html" />
     <Content Include="Views\gender.html" />
     <Content Include="Views\genders.html" />
@@ -131,12 +133,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers.cs" />
     <Compile Include="Models\Tables\Accounts.cs" />
     <Compile Include="Models\DataModel.cs" />
     <Compile Include="Models\Tables\Genders.cs" />
     <Compile Include="Models\Tables\Goods.cs" />
     <Compile Include="Models\Tables\Purchases.cs" />
     <Compile Include="Models\Tables\Shoppers.cs" />
+    <Compile Include="Models\Views\getPurchases.cs" />
     <Compile Include="Models\Views\getShoppers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PostParameterBinding.cs" />

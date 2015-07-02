@@ -22,51 +22,160 @@ namespace WebApiProject.Controllers
         // POST QUERIES USING STORED PROCEDURES
         //*********************************************
 
+        // [URI: api/purchases?action=get], [VIEW: purchases.html]
+        [Route("api/purchases")]
+        [HttpPost]
+        public IEnumerable<getPurchases> GetPurchases(
+            int good_id,
+            byte? gender_ix = null,
+            string action = null)
+        {
+            //System.Threading.Thread.Sleep(2000);
+
+            //List<object> list = new List<object>();
+            //Dictionary<string, object> dict = new Dictionary<string, object>();
+
+            //IEnumerable<getPurchases> results;
+
+            try
+            {
+                SqlParameter[] sp_params = {
+                    new SqlParameter() {
+                        ParameterName = "GoodID",
+                        SqlDbType = SqlDbType.Int,
+                        Value = good_id,
+                        Direction = ParameterDirection.Input
+                    },
+                    new SqlParameter() {
+                        ParameterName = "GenderIX",
+                        SqlDbType = SqlDbType.TinyInt,
+                        Value = gender_ix,
+                        Direction = ParameterDirection.Input
+                    }
+                };
+
+                var results = db.getPurchases.SqlQuery(
+                    "dbo.getPurchases @GenderIX, @GoodID", sp_params)
+                    .ToList();
+
+                return results;
+                //dict.Add("Result", "OK");
+            }
+            catch (SqlException x)
+            {
+                //dict.Add("Result", "ERROR");
+                //dict.Add("ErrMsg", "DATABASE: " + x.ToString());
+            }
+            catch (Exception x)
+            {
+                //dict.Add("Result", "ERROR");
+                //dict.Add("ErrMsg", "APP: " + x.ToString());
+            }
+
+            //list.Add(dict);
+
+            //return list.ToArray();
+            return null;
+
+        }
+
         // [URI: api/new-shopper?action=insert], [VIEW: new-shopper.html]
         [Route("api/new-shopper")]
         [HttpPost]
-        public string NewShopper(
-            int acct_id,
+        public object[] NewShopper(
+            string email,
+            string pwd,
             string name,
             byte? gender_ix,
             bool opt_in,
             string action = null)
         {
-            SqlParameter[] sp = {
-                new SqlParameter() {
-                    ParameterName = "AccountID",
-                    SqlDbType = SqlDbType.Int,
-                    Value = acct_id,
-                    Direction = ParameterDirection.Input
-                },
-                new SqlParameter() {
-                    ParameterName = "Name",
-                    SqlDbType = SqlDbType.NVarChar,
-                    //Size = 100,
-                    Value = name,
-                    Direction = ParameterDirection.Input
-                },
-                new SqlParameter() {
-                    ParameterName = "GenderIX",
-                    SqlDbType = SqlDbType.TinyInt,
-                    Value = gender_ix,
-                    Direction = ParameterDirection.Input
-                },
-                new SqlParameter() {
-                    ParameterName = "OptIn",
-                    SqlDbType = SqlDbType.Bit,
-                    Value = opt_in,
-                    Direction = ParameterDirection.Input
-                }
-            };
+            //System.Threading.Thread.Sleep(2000);
 
-            int result = db.Database.ExecuteSqlCommand(
-                "dbo.newShopper @AccountID, @Name, @GenderIX, @OptIn", sp);
+            List<object> list = new List<object>();
+            Dictionary<string, object> dict = new Dictionary<string, object>();
 
-            return string.Format("Acct. Id: {0}, Name: {1}, Gender: {2}, Opt-In: {3}, Action: {4}", acct_id, name, gender_ix, opt_in, action);
-            
-            //return new string[] { "value1", "value2" };
-            //return result;
+            int acct_id = 0;
+
+            try
+            {
+                SqlParameter[] params_sp1 = {
+                    new SqlParameter() {
+                        ParameterName = "NewID",
+                        SqlDbType = SqlDbType.Int,
+                        Value = 0,
+                        Direction = ParameterDirection.Output
+                    },
+                    new SqlParameter() {
+                        ParameterName = "Email",
+                        SqlDbType = SqlDbType.VarChar,
+                        Value = email,
+                        Direction = ParameterDirection.Input
+                    },
+                    new SqlParameter() {
+                        ParameterName = "Password",
+                        SqlDbType = SqlDbType.NVarChar,
+                        Value = pwd,
+                        Direction = ParameterDirection.Input
+                    }
+                };
+
+                int exec_sp1 = db.Database.ExecuteSqlCommand(
+                    "dbo.newAccount @Email, @Password, @NewID out", params_sp1);
+
+                //*** obtain output paramater's (@NewID) value
+                acct_id = (int)params_sp1[0].Value; //*** [0] is the index number of the output param
+
+
+                SqlParameter[] params_sp2 = {
+                    new SqlParameter() {
+                        ParameterName = "AccountID",
+                        SqlDbType = SqlDbType.Int,
+                        Value = acct_id,
+                        Direction = ParameterDirection.Input
+                    },
+                    new SqlParameter() {
+                        ParameterName = "Name",
+                        SqlDbType = SqlDbType.NVarChar,
+                        //Size = 100,
+                        Value = name,
+                        Direction = ParameterDirection.Input
+                    },
+                    new SqlParameter() {
+                        ParameterName = "GenderIX",
+                        SqlDbType = SqlDbType.TinyInt,
+                        Value = gender_ix,
+                        Direction = ParameterDirection.Input
+                    },
+                    new SqlParameter() {
+                        ParameterName = "OptIn",
+                        SqlDbType = SqlDbType.Bit,
+                        Value = opt_in,
+                        Direction = ParameterDirection.Input
+                    }
+                };
+
+                int exec_sp2 = db.Database.ExecuteSqlCommand(
+                        "dbo.newShopper @AccountID, @Name, @GenderIX, @OptIn", params_sp2);
+
+                dict.Add("Result", "OK");
+            }
+            catch (SqlException x)
+            {
+                dict.Add("Result", "ERROR");
+                dict.Add("ErrMsg", "DATABASE: " + x.ToString());
+            }
+            catch (Exception x)
+            {
+                dict.Add("Result", "ERROR");
+                dict.Add("ErrMsg", "APP: " + x.ToString());
+            }
+
+            dict.Add("NewID", acct_id);
+            list.Add(dict);
+
+            return list.ToArray();
+
         }
 
 
@@ -143,6 +252,11 @@ namespace WebApiProject.Controllers
 
             return results;
         }
+
+
+        //*********************************************
+        // GET QUERIES USING RAW SQL
+        //*********************************************
 
 
         //*********************************************
