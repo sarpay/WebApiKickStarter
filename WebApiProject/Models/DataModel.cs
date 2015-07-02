@@ -23,7 +23,6 @@ namespace WebApiProject.Models
 
         // stored procedures
         public virtual DbSet<getShoppers> getShoppers { get; set; }
-        public virtual DbSet<getPurchases> getPurchases { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

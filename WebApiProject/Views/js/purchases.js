@@ -32,20 +32,25 @@ function gridInit(jsonData) {
 
                 var ajaxCall = makeAjaxCall('POST', 'purchases', jsonData);
                 ajaxCall.done(function (data) {
-                    console.log(data);
+                    //console.log(data);
                     if (data) {
-                        if (!data[0]) {
-                            $('#msg').text('SERVER RETURNED EMPTY JSON - 2');
+                        if (data[0].Result) {
+                            if (data[0].Result == 'OK') {
+                                $('#msg').text('');
+                                request.success(data[0].Data); // bind data to grid
+                            } else if (data[0].Result == 'ERROR') {
+                                $('#msg').text(data[0].ErrMsg);
+                                request.error(); //*** notify kendo datasource that the request has failed
+                            }
                         } else {
-                            $('#msg').text('');
+                            $('#msg').text('INVALID JSON RETURNED - 2');
                         }
-                        request.success(data); // bind data to grid
                     } else {
-                        $('#msg').text('SERVER RETURNED EMPTY JSON - 1');
+                        $('#msg').text('INVALID JSON RETURNED - 1');
                     }
                 });
                 ajaxCall.error(function (data) {
-                    request.error(data); //*** notify the kendo datasource that the request failed
+                    request.error(data);
                 });
 
             } //*** read ends

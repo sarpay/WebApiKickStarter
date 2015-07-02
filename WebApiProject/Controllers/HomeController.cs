@@ -16,67 +16,59 @@ namespace WebApiProject.Controllers
     public class HomeController : ApiController
     {
         private DataModel db = new DataModel();
-
+        protected ADONET AdoNet = new ADONET();
 
         //*********************************************
         // POST QUERIES USING STORED PROCEDURES
         //*********************************************
 
-        // [URI: api/purchases?action=get], [VIEW: purchases.html]
+        // [URI: api/purchases], [VIEW: purchases.html]
         [Route("api/purchases")]
         [HttpPost]
-        public IEnumerable<getPurchases> GetPurchases(
+        public object[] GetPurchases(
             int good_id,
-            byte? gender_ix = null,
-            string action = null)
+            byte? gender_ix)
         {
             //System.Threading.Thread.Sleep(2000);
 
-            //List<object> list = new List<object>();
-            //Dictionary<string, object> dict = new Dictionary<string, object>();
-
-            //IEnumerable<getPurchases> results;
+            List<object> resultsList = new List<object>();
+            List<object> dataList = new List<object>();
+            Dictionary<string, object> dict = new Dictionary<string, object>();
 
             try
             {
-                SqlParameter[] sp_params = {
-                    new SqlParameter() {
-                        ParameterName = "GoodID",
-                        SqlDbType = SqlDbType.Int,
-                        Value = good_id,
-                        Direction = ParameterDirection.Input
-                    },
-                    new SqlParameter() {
-                        ParameterName = "GenderIX",
-                        SqlDbType = SqlDbType.TinyInt,
-                        Value = gender_ix,
-                        Direction = ParameterDirection.Input
-                    }
-                };
+                // query the database
+                AdoNet.SqlConnect();
 
-                var results = db.getPurchases.SqlQuery(
-                    "dbo.getPurchases @GenderIX, @GoodID", sp_params)
-                    .ToList();
+                //*** Get [Users] table
+                AdoNet.SqlNewCommand("dbo.getPurchases", "sp");
 
-                return results;
-                //dict.Add("Result", "OK");
+                // INs
+                AdoNet.SqlNewParam("Input", "@GoodID", good_id, SqlDbType.Int, 0);
+                AdoNet.SqlNewParam("Input", "@GenderIX", gender_ix, SqlDbType.TinyInt, 0);
+
+                // Create a DataList
+                AdoNet.SqlNewAdapter(AdoNet.SqlCmd);
+                AdoNet.SqlFillDataTable();
+                dataList = Helpers.DataTableToList(AdoNet.SqlDataTable);
+
+                // Add DataList to Dictionary
+                dict.Add("Result", "OK");
+                dict.Add("Data", dataList);
             }
             catch (SqlException x)
             {
-                //dict.Add("Result", "ERROR");
-                //dict.Add("ErrMsg", "DATABASE: " + x.ToString());
+                dict.Add("Result", "ERROR");
+                dict.Add("ErrMsg", "DATABASE: " + x.ToString());
             }
             catch (Exception x)
             {
-                //dict.Add("Result", "ERROR");
-                //dict.Add("ErrMsg", "APP: " + x.ToString());
+                dict.Add("Result", "ERROR");
+                dict.Add("ErrMsg", "APP: " + x.ToString());
             }
 
-            //list.Add(dict);
-
-            //return list.ToArray();
-            return null;
-
+            resultsList.Add(dict);
+            return resultsList.ToArray();
         }
 
         // [URI: api/new-shopper?action=insert], [VIEW: new-shopper.html]
