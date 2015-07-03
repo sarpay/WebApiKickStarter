@@ -81,7 +81,43 @@ function gridInit(jsonData) {
         reorderable: false,
         selectable: 'row', //*** necessary to send params from editables
         scrollable: false,
-        toolbar: kendo.template($('#toolbar_template').html())
+        toolbar: kendo.template($('#toolbar_template').html()),
+        columns: [
+            {
+                field: 'ID', //*** required for "Add new record" to work properly
+                filterable: false,
+                hidden: false
+            },
+            {
+                field: 'ShopperEmail',
+                title: 'Email',
+                encoded: false,
+                //width: '350px',
+                filterable: false
+            },
+            {
+                field: 'ShopperName',
+                title: 'Name',
+                //width: '200px',
+                filterable: false
+            },
+            {
+                field: 'ShopperGender',
+                title: 'Gender',
+                //width: '200px',
+                filterable: false,
+                attributes: { style: 'text-align: center;' }
+                //*** column header title text is centered using css in html file
+            },
+            {
+                field: 'TotalPurchase',
+                title: 'Total Purchase',
+                //width: '100px',
+                filterable: false,
+                attributes: { style: 'text-align: right;' }
+                //*** column header title text is centered using css in html file
+            }
+        ]
     });
 
 

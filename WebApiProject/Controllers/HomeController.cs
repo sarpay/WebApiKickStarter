@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using WebApiProject.Models;
 using WebApiProject.Models.Tables;
 using WebApiProject.Models.Views;
+using System.ComponentModel;
 
 namespace WebApiProject.Controllers
 {
@@ -17,16 +18,6 @@ namespace WebApiProject.Controllers
     {
         private DataModel db = new DataModel();
         protected ADONET AdoNet = new ADONET();
-
-        //public class ResultsList
-        //{
-        //    public int ID { set; get; }
-        //    public string GoodName { set; get; }
-        //    public decimal GoodPrice { set; get; }
-        //    public string ShopperEmail { set; get; }
-        //    public string ShopperName { set; get; }
-        //    public string ShopperGender { set; get; }
-        //}
 
         //*********************************************
         // POST QUERIES USING STORED PROCEDURES
@@ -42,7 +33,6 @@ namespace WebApiProject.Controllers
             //System.Threading.Thread.Sleep(2000);
 
             List<object> resultsList = new List<object>();
-            List<object> dataList = new List<object>();
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
             try
@@ -62,15 +52,54 @@ namespace WebApiProject.Controllers
 
                 // Fill DataTable from Adapter and Convert it to Jagged Array and List.
                 AdoNet.SqlFillDataTable();
+
+                List<object> dataList = new List<object>();
                 dataList = Helpers.DataTableToList(AdoNet.SqlDataTable);
-                object[] dataArray = Helpers.DataTableToJaggedArray(AdoNet.SqlDataTable);
-                int recordCount = dataList.Count();
+                //dataList.Sort();
+                int listCount = dataList.Count();
+
+                // Modify List Items
+                foreach (Dictionary<string, string> colDict in dataList)
+                {
+                    List<string> keysOfDecimal = new List<string>();
+                    List<string> keysOfEmail = new List<string>();
+
+                    foreach (string key in colDict.Keys)
+                    {
+                        if (Helpers.TryConvertTo<decimal>(colDict[key]) && colDict[key].Contains("."))
+                        {
+                            keysOfDecimal.Add(key);
+                        }
+                        if (colDict[key].Contains("@"))
+                        {
+                            keysOfEmail.Add(key);
+                        }
+                    }
+                    
+                    foreach (string key in keysOfEmail)
+                    {
+                        colDict[key] = "<a href=\"mailto:" + colDict[key] + "\">" + colDict[key] + "</a>";
+                    }
+                    //*** or modify values for the entire column
+                    //colDict["ShopperEmail"] = "<a href=\"mailto:" + colDict["ShopperEmail"] + "\">" + colDict["ShopperEmail"] + "</a>";
+
+                    foreach (string key in keysOfDecimal)
+                    {
+                        colDict[key] = "$" + colDict[key];
+                    }
+                    //*** modify values of a specfic column items
+                    //colDict["TotalPurchase"] = "$" + colDict["TotalPurchase"];
+                }
+
+                object[] dataArray = Helpers.DataTableToArray(AdoNet.SqlDataTable);
+                int arrayCount = dataArray.Count();
 
                 // Populate the Dictionary
                 dict.Add("Result", "OK");
                 dict.Add("Data", dataList);
-                dict.Add("Array", dataArray[0]);
-                dict.Add("Count", recordCount);
+                dict.Add("Array", dataArray);
+                dict.Add("ArrayCount", arrayCount);
+                dict.Add("ListCount", listCount);
             }
             catch (SqlException x)
             {
@@ -90,6 +119,7 @@ namespace WebApiProject.Controllers
             resultsList.Add(dict);
             return resultsList.ToArray();
         }
+
 
         // [URI: api/new-shopper?action=insert], [VIEW: new-shopper.html]
         [Route("api/new-shopper")]

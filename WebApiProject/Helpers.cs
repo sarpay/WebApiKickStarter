@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection;
+using WebApiProject.Models.Views;
 
 namespace WebApiProject
 {
@@ -11,9 +10,32 @@ namespace WebApiProject
 
         protected ADONET AdoNet = new ADONET();
 
-
         public static List<object> DataTableToList(DataTable dt)
         {
+            List<object> rowList = new List<object>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                var colDict = new Dictionary<string, string>();
+                foreach (DataColumn dc in dt.Columns)
+                {
+                    colDict.Add(dc.ColumnName, (string.Empty == dr[dc].ToString()) ? "" : dr[dc].ToString());
+                }
+                rowList.Add(colDict);
+            }
+            return rowList;
+        }
+
+
+        public static bool ConvertToBoolean(object value)
+        {
+            bool functionReturnValue = ((string)value == "1" | (short)value == 1);
+            return functionReturnValue;
+        }
+
+
+        public static object[] DataTableToArray(DataTable dt) // jagged aka array-of-arrays
+        {
+            object[][] array = new object[1][];
             Dictionary<string, object> colList;
             List<object> rowList = new List<object>();
 
@@ -26,54 +48,26 @@ namespace WebApiProject
                 }
                 rowList.Add(colList);
             }
-
-            return rowList;
-        }
-
-
-        public static bool ConvertToBoolean(object value)
-        {
-            bool functionReturnValue = ((string)value == "1" | (short)value == 1);
-            return functionReturnValue;
-        }
-
-
-        public static object[] DataTableToJaggedArray(DataTable dt) // jagged aka array-of-arrays
-        {
-            object[][] array = new object[1][];
-            Dictionary<string, object> colList;
-            List<object> rowList;
-            List<object> tableList = new List<object>();
-            int runCount = -1;
-
-            foreach (DataRow dr in dt.Rows)
-            {
-                colList = new Dictionary<string, object>();
-                foreach (DataColumn dc in dt.Columns)
-                {
-                    colList.Add(dc.ColumnName, (string.Empty == dr[dc].ToString()) ? "" : dr[dc].ToString());
-                }
-
-                rowList = new List<object>();
-                rowList.Add(colList);
-                tableList.Add(rowList);
-
-                runCount += 1;
-            }
-
-            //Array.Resize(ref array, runCount + 1);
-
-
-            //orderedList = tableList.OrderBy(o => o.ID).ToList();
-            //Array.Sort<int>(0, (a, b) => array[a].CompareTo(array[b]));
-            array[0] = tableList.ToArray();
-            //for (int i = 0; i < array.GetUpperBound(1); i++)
-            //{
-            //    array[i] = tableList.ToArray();
-            //}
-            
+            array[0] = rowList.ToArray();
 
             return array[0];
         }
+
+
+        public static bool TryConvertTo<T>(string input)
+        {
+            Object result = null;
+            try
+            {
+                result = Convert.ChangeType(input, typeof(T));
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
+    
 }

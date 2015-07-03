@@ -11,16 +11,15 @@ BEGIN
 
 	SET @SqlString = N'' +
 		N'SELECT ' +
-			N'[Goo].[ID], ' +
-			N'[Goo].[Name] [GoodName], ' +
-			N'[Goo].[Price] [GoodPrice], ' +
+			N'[A].[ID], ' +
 			N'[A].[Email] [ShopperEmail], ' +
 			N'[S].[Name] [ShopperName], ' +
-			N'[G].[Text] [ShopperGender] ' +
+			N'[G].[Text] [ShopperGender], ' +
+			N'SUM([Goo].[Price]) [TotalPurchase] ' +
 		N'FROM ' +
-			N'[Purchases] [P] ' +
-			N'INNER JOIN [Accounts] [A] ON [A].[ID] = [P].[AccountID] ' +
+			N'[Accounts] [A] ' +
 			N'INNER JOIN [Shoppers] [S] ON [S].[AccountID] = [A].[ID] ' +
+			N'INNER JOIN [Purchases] [P] ON [P].[AccountID] = [A].[ID] ' +
 			N'INNER JOIN [Goods] [Goo] ON [Goo].[ID] = [P].[GoodID] ' +
 			N'LEFT JOIN [Genders] [G] ON [G].[IX] = [S].[GenderIX] ' + -- LEFT JOIN SINCE [GENDER IX] MAY BE NULL
 		N'WHERE ' +
@@ -35,11 +34,12 @@ BEGIN
 				SET @SqlString = @SqlString + N' ' +
 				N'AND [Goo].[ID]=' + CAST(@GoodID AS NCHAR(32))
 			END
-			SET @SqlString = @SqlString + N' '
+			SET @SqlString = @SqlString + N' ' +
+		N'GROUP BY [A].[ID], [A].[Email], [S].[Name], [G].[Text] '
 
 	SET @SqlString = @SqlString + 
 		N'ORDER BY ' +
-			N'[Goo].[ID] DESC'
+			N'[TotalPurchase] DESC'
 	
 	--PRINT @SqlString
 	EXEC sp_executesql @SqlString
