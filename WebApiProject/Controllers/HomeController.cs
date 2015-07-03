@@ -150,8 +150,8 @@ namespace WebApiProject.Controllers
             string name,
             byte? gender_ix,
             bool opt_in,
-            string action = null)
-        {
+            string action = null) {
+
             //System.Threading.Thread.Sleep(2000);
 
             List<object> list = new List<object>();
