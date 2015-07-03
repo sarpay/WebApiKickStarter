@@ -9,7 +9,7 @@ $(document).ready(function () {
         var queryString = $(this).serialize(); //*** serialize all form values
         var jsonObj = convertQueryStringToJSON(queryString);
         var jsonData = JSON.stringify(jsonObj);
-
+        console.log(jsonData);
         gridInit(jsonData);
 
     });
@@ -116,6 +116,14 @@ function gridInit(jsonData) {
                 //width: '100px',
                 filterable: false,
                 attributes: { style: 'text-align: right;' }
+                //*** column header title text is centered using css in html file
+            },
+            {
+                field: 'RegDate',
+                title: 'Registered On',
+                //width: '100px',
+                filterable: false,
+                attributes: { style: 'text-align: center;' }
                 //*** column header title text is centered using css in html file
             }
         ]

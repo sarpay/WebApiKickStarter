@@ -15,7 +15,8 @@ BEGIN
 			N'[A].[Email] [ShopperEmail], ' +
 			N'[S].[Name] [ShopperName], ' +
 			N'[G].[Text] [ShopperGender], ' +
-			N'SUM([Goo].[Price]) [TotalPurchase] ' +
+			N'SUM([Goo].[Price]) [TotalPurchase], ' +
+			N'[A].[RegDate] ' +
 		N'FROM ' +
 			N'[Accounts] [A] ' +
 			N'INNER JOIN [Shoppers] [S] ON [S].[AccountID] = [A].[ID] ' +
@@ -34,8 +35,8 @@ BEGIN
 				SET @SqlString = @SqlString + N' ' +
 				N'AND [Goo].[ID]=' + CAST(@GoodID AS NCHAR(32))
 			END
-			SET @SqlString = @SqlString + N' ' +
-		N'GROUP BY [A].[ID], [A].[Email], [S].[Name], [G].[Text] '
+		SET @SqlString = @SqlString + N' ' +
+		N'GROUP BY [A].[ID], [A].[Email], [S].[Name], [G].[Text], [A].[RegDate] '
 
 	SET @SqlString = @SqlString + 
 		N'ORDER BY ' +

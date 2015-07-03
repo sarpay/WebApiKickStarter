@@ -33,9 +33,9 @@ namespace WebApiProject
         }
 
 
-        public static object[] DataTableToArray(DataTable dt) // jagged aka array-of-arrays
+        public static object[] DataTableToArray(DataTable dt)
         {
-            object[][] array = new object[1][];
+            object[][] array = new object[1][]; //*** jagged aka array-of-arrays
             Dictionary<string, object> colList;
             List<object> rowList = new List<object>();
 

@@ -19,6 +19,7 @@ namespace WebApiProject.Controllers
         private DataModel db = new DataModel();
         protected ADONET AdoNet = new ADONET();
 
+
         //*********************************************
         // POST QUERIES USING STORED PROCEDURES
         //*********************************************
@@ -28,15 +29,14 @@ namespace WebApiProject.Controllers
         [HttpPost]
         public object[] GetPurchases(
             int? good_id,
-            byte? gender_ix)
-        {
+            byte? gender_ix) {
+
             //System.Threading.Thread.Sleep(2000);
 
             List<object> resultsList = new List<object>();
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
-            try
-            {
+            try {
                 //*** query the database
                 AdoNet.SqlConnect();
 
@@ -50,55 +50,68 @@ namespace WebApiProject.Controllers
                 //*** Set Adapter
                 AdoNet.SqlNewAdapter(AdoNet.SqlCmd);
 
-                //*** Fill DataTable from Adapter and Convert it to Jagged Array and List.
+                //*** Fill DataTable from Adapter
                 AdoNet.SqlFillDataTable();
 
+                //*** Fill the List object with DataTable results
                 List<object> dataList = new List<object>();
                 dataList = Helpers.DataTableToList(AdoNet.SqlDataTable);
+
+                //*** Custom Sorting
                 //dataList.Sort();
+
+                //*** Get items count
                 int listCount = dataList.Count();
 
                 //*** Modify List Items
-                foreach (Dictionary<string, string> colDict in dataList)
-                {
+                foreach (Dictionary<string, string> colDict in dataList) {
+                    
                     //*** Iterating thru rows of the List object..
 
                     List<string> keysOfMoney = new List<string>();
                     List<string> keysOfEmail = new List<string>();
+                    List<string> keysOfDateTime = new List<string>();
 
-                    foreach (string key in colDict.Keys)
-                    {
-                        if (Helpers.TryConvertTo<decimal>(colDict[key]) && colDict[key].Contains("."))
-                        {
+                    foreach (string key in colDict.Keys) {
+                        if (Helpers.TryConvertTo<decimal>(colDict[key]) && colDict[key].Contains(".")) {
                             keysOfMoney.Add(key);
                         }
-                        if (colDict[key].Contains("@"))
-                        {
+                        if (Helpers.TryConvertTo<DateTime>(colDict[key])) {
+                            keysOfDateTime.Add(key);
+                        }
+                        if (colDict[key].Contains("@")) {
                             keysOfEmail.Add(key);
                         }
                     }
-                    
-                    foreach (string key in keysOfEmail)
-                    {
+
+                    //*** modify ALL Email values with custom html
+                    foreach (string key in keysOfEmail) {
                         colDict[key] = "<a href=\"mailto:" + colDict[key] + "\">" + colDict[key] + "</a>";
                     }
-                    //*** or modify values for the entire column
+                    //*** --- or --- (modify Email values of a specific column)
                     //colDict["ShopperEmail"] = "<a href=\"mailto:" + colDict["ShopperEmail"] + "\">" + colDict["ShopperEmail"] + "</a>";
 
-                    foreach (string key in keysOfMoney)
-                    {
+                    //*** modify ALL SmallMoney values
+                    foreach (string key in keysOfMoney) {
                         colDict[key] = "$" + String.Format("{0:F2}", Convert.ToDecimal(colDict[key]));
                     }
-                    //*** modify values of a specfic column items
-                    //colDict["TotalPurchase"] = "$" + colDict["TotalPurchase"];
+                    //*** --- or --- (modify SmallMoney values of a specfic column)
+                    //colDict["TotalPurchase"] = "$" + String.Format("{0:F2}", Convert.ToDecimal(colDict["TotalPurchase"]));
 
-                    if (colDict["ShopperGender"] == "Male")
-                    {
+                    //*** modify ALL DateTime values
+                    foreach (string key in keysOfDateTime) {
+                        colDict[key] = String.Format("{0:MMMM dd - yyyy @ HH:mm}", Convert.ToDateTime(colDict["RegDate"]));
+                    }
+                    //*** --- or --- (modify DateTime values of a specfic column)
+                    //colDict["RegDate"] = String.Format("{0:MMMM dd - yyyy @ HH:mm}", Convert.ToDateTime(colDict["RegDate"]));
+
+                    //*** modify Gender column with custom html
+                    if (colDict["ShopperGender"] == "Male") {
                         colDict["ShopperGender"] = "<img src=\"images/male.png\" style=\"width: 20px; height: 20px\" />";
-                    } else
-                    {
+                    } else {
                         colDict["ShopperGender"] = "<img src=\"images/female.png\" style=\"width: 20px; height: 20px\" />";
                     }
+
                 }
 
                 //object[] dataArray = Helpers.DataTableToArray(AdoNet.SqlDataTable);
@@ -111,18 +124,15 @@ namespace WebApiProject.Controllers
                 //dict.Add("ArrayCount", arrayCount);
                 dict.Add("ListCount", listCount);
             }
-            catch (SqlException x)
-            {
+            catch (SqlException x) {
                 dict.Add("Result", "ERROR");
                 dict.Add("ErrMsg", "DATABASE: " + x.ToString());
             }
-            catch (Exception x)
-            {
+            catch (Exception x) {
                 dict.Add("Result", "ERROR");
                 dict.Add("ErrMsg", "APP: " + x.ToString());
             }
-            finally
-            {
+            finally {
                 AdoNet.SqlDisconnect();
             }
 
@@ -304,11 +314,6 @@ namespace WebApiProject.Controllers
 
             return results;
         }
-
-
-        //*********************************************
-        // GET QUERIES USING RAW SQL
-        //*********************************************
 
 
         //*********************************************
