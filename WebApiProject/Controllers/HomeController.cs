@@ -18,6 +18,16 @@ namespace WebApiProject.Controllers
         private DataModel db = new DataModel();
         protected ADONET AdoNet = new ADONET();
 
+        //public class ResultsList
+        //{
+        //    public int ID { set; get; }
+        //    public string GoodName { set; get; }
+        //    public decimal GoodPrice { set; get; }
+        //    public string ShopperEmail { set; get; }
+        //    public string ShopperName { set; get; }
+        //    public string ShopperGender { set; get; }
+        //}
+
         //*********************************************
         // POST QUERIES USING STORED PROCEDURES
         //*********************************************
@@ -47,14 +57,20 @@ namespace WebApiProject.Controllers
                 AdoNet.SqlNewParam("Input", "@GoodID", good_id, SqlDbType.Int, 0);
                 AdoNet.SqlNewParam("Input", "@GenderIX", gender_ix, SqlDbType.TinyInt, 0);
 
-                // Create a DataList
+                // Set Adapter
                 AdoNet.SqlNewAdapter(AdoNet.SqlCmd);
+
+                // Fill DataTable from Adapter and Convert it to Jagged Array and List.
                 AdoNet.SqlFillDataTable();
                 dataList = Helpers.DataTableToList(AdoNet.SqlDataTable);
+                object[] dataArray = Helpers.DataTableToJaggedArray(AdoNet.SqlDataTable);
+                int recordCount = dataList.Count();
 
-                // Add DataList to Dictionary
+                // Populate the Dictionary
                 dict.Add("Result", "OK");
                 dict.Add("Data", dataList);
+                dict.Add("Array", dataArray[0]);
+                dict.Add("Count", recordCount);
             }
             catch (SqlException x)
             {

@@ -60,6 +60,11 @@ namespace WebApiProject
             SqlDataSet = new DataSet();
         }
 
+        public void SqlFillDataSet(string dataTableName)
+        {
+            SqlAdapter.Fill(SqlDataSet, dataTableName);
+        }
+
         public void SqlFillDataTable()
         {
             SqlDataTable = new DataTable();
