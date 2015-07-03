@@ -37,20 +37,20 @@ namespace WebApiProject.Controllers
 
             try
             {
-                // query the database
+                //*** query the database
                 AdoNet.SqlConnect();
 
                 //*** Get [Users] table
                 AdoNet.SqlNewCommand("dbo.getPurchases", "sp");
 
-                // INs
+                //*** INs
                 AdoNet.SqlNewParam("Input", "@GoodID", good_id, SqlDbType.Int, 0);
                 AdoNet.SqlNewParam("Input", "@GenderIX", gender_ix, SqlDbType.TinyInt, 0);
 
-                // Set Adapter
+                //*** Set Adapter
                 AdoNet.SqlNewAdapter(AdoNet.SqlCmd);
 
-                // Fill DataTable from Adapter and Convert it to Jagged Array and List.
+                //*** Fill DataTable from Adapter and Convert it to Jagged Array and List.
                 AdoNet.SqlFillDataTable();
 
                 List<object> dataList = new List<object>();
@@ -58,17 +58,19 @@ namespace WebApiProject.Controllers
                 //dataList.Sort();
                 int listCount = dataList.Count();
 
-                // Modify List Items
+                //*** Modify List Items
                 foreach (Dictionary<string, string> colDict in dataList)
                 {
-                    List<string> keysOfDecimal = new List<string>();
+                    //*** Iterating thru rows of the List object..
+
+                    List<string> keysOfMoney = new List<string>();
                     List<string> keysOfEmail = new List<string>();
 
                     foreach (string key in colDict.Keys)
                     {
                         if (Helpers.TryConvertTo<decimal>(colDict[key]) && colDict[key].Contains("."))
                         {
-                            keysOfDecimal.Add(key);
+                            keysOfMoney.Add(key);
                         }
                         if (colDict[key].Contains("@"))
                         {
@@ -83,22 +85,30 @@ namespace WebApiProject.Controllers
                     //*** or modify values for the entire column
                     //colDict["ShopperEmail"] = "<a href=\"mailto:" + colDict["ShopperEmail"] + "\">" + colDict["ShopperEmail"] + "</a>";
 
-                    foreach (string key in keysOfDecimal)
+                    foreach (string key in keysOfMoney)
                     {
-                        colDict[key] = "$" + colDict[key];
+                        colDict[key] = "$" + String.Format("{0:F2}", Convert.ToDecimal(colDict[key]));
                     }
                     //*** modify values of a specfic column items
                     //colDict["TotalPurchase"] = "$" + colDict["TotalPurchase"];
+
+                    if (colDict["ShopperGender"] == "Male")
+                    {
+                        colDict["ShopperGender"] = "<img src=\"images/male.png\" style=\"width: 20px; height: 20px\" />";
+                    } else
+                    {
+                        colDict["ShopperGender"] = "<img src=\"images/female.png\" style=\"width: 20px; height: 20px\" />";
+                    }
                 }
 
-                object[] dataArray = Helpers.DataTableToArray(AdoNet.SqlDataTable);
-                int arrayCount = dataArray.Count();
+                //object[] dataArray = Helpers.DataTableToArray(AdoNet.SqlDataTable);
+                //int arrayCount = dataArray.Count();
 
                 // Populate the Dictionary
                 dict.Add("Result", "OK");
                 dict.Add("Data", dataList);
-                dict.Add("Array", dataArray);
-                dict.Add("ArrayCount", arrayCount);
+                //dict.Add("Array", dataArray);
+                //dict.Add("ArrayCount", arrayCount);
                 dict.Add("ListCount", listCount);
             }
             catch (SqlException x)

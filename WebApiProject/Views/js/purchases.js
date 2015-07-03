@@ -104,6 +104,7 @@ function gridInit(jsonData) {
             {
                 field: 'ShopperGender',
                 title: 'Gender',
+                encoded: false,
                 //width: '200px',
                 filterable: false,
                 attributes: { style: 'text-align: center;' }
