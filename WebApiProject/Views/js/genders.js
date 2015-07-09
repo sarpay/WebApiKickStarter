@@ -46,8 +46,9 @@ function gridInit() {
                 //    }
                 //);
 
-                var xhr = jqXHR('GET', 'genders', 'application/json; charset=utf-8', null);
-                xhr.always(function () {
+                var xhrPromise = jqXHR('GET', 'genders', 'application/json; charset=utf-8', null);
+                xhrPromise /* promise callbacks are executed in order */
+                .always(function () {
                     $('.spinner').hide();
                     grid.success([]); //** stops the loading effect on empty grid
                 })

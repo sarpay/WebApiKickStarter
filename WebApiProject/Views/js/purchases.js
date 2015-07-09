@@ -58,8 +58,9 @@ function gridInit(jsonString, jsonObj) {
                 //    }
                 //);
 
-                var xhr = jqXHR('POST', 'purchases', 'application/json; charset=utf-8', jsonObj);
-                xhr.always(function (response) {
+                var xhrPromise = jqXHR('POST', 'purchases', 'application/json; charset=utf-8', jsonObj);
+                xhrPromise /* promise callbacks are executed in order */
+                .always(function (response) {
                     $('.spinner').hide();
                     grid.success([]); //** stops the loading effect on empty grid
                 })
