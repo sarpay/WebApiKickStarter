@@ -16,29 +16,60 @@ function gridInit() {
     var gridDatasource = new kendo.data.DataSource({
         transport: {
 
-            read: function (request) {
+            read: function (grid) {
 
-                $('#msg').text('Loading..');
+                $('#msg').text('');
+                $('.spinner').show();
 
-                var ajaxCall = makeAjaxCall('GET', 'genders', ''); //*** does not expect any params.
-                ajaxCall.done(function (data) {
-                    //$.each(data, function (key, item) {
-                    //    $('<li>', { text: formatItem(item) }).appendTo($('ul#genders'));
-                    //});
-                    if (data) {
-                        request.success(data); // bind data to grid
-                        if (!data[0]) {
+                /*** REQUIRES ES6 HARMONY ***/
+                //XHR(
+                //    'GET', //*** method
+                //    'genders', //*** api route
+                //    null //*** params as JSON Object
+                //)
+                //.then(
+                //    function (response) {
+                //        //console.log(response);
+                //        grid.success(response); //*** bind data to grid
+                //        $.each(response[0], function (key, item) {
+                //            $('<li>', { text: item }).appendTo($('ul#genders'));
+                //        });
+                //    },
+                //    function (response) {
+                //        $('#msg').html('<b>XHR Error</b><br/>' + response.Message + '<br/>' + response.MessageDetail);
+                //        grid.error(); //*** notify the kendo datasource that the request failed
+                //    }
+                //)
+                //.then(
+                //    function () {
+                //        $('.spinner').hide();
+                //    }
+                //);
+
+                var xhr = jqXHR('GET', 'genders', 'application/json; charset=utf-8', null);
+                xhr.always(function () {
+                    $('.spinner').hide();
+                    grid.success([]); //** stops the loading effect on empty grid
+                })
+                .done(function (response) {
+                    //console.log(response);
+                    if (response) {
+                        grid.success(response); // bind data to grid
+                        if (!response[0]) {
                             $('#msg').text('SERVER RETURNED EMPTY JSON');
                         } else {
-                            $('#msg').text('');
+                            $.each(response[0], function (key, item) {
+                                $('<li>', { text: item }).appendTo($('ul#genders'));
+                            });
                         }
                     } else {
-                        $('#msg').text('SERVER RETURNED EMPTY JSON');
+                        $('#msg').text('SERVER RETURNED NULL');
                     }
                 });
-                ajaxCall.error(function (data) {
-                    request.error(data); //*** notify the kendo datasource that the request failed
-                });
+                //.fail(function (response) {
+                //    console.log(response);
+                //    /* make further ui changes on xhr fail */
+                //});
 
             } //*** read ends
 

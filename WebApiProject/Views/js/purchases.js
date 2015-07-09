@@ -8,16 +8,17 @@ $(document).ready(function () {
 
         var queryString = $(this).serialize(); //*** serialize all form values
         var jsonObj = convertQueryStringToJSON(queryString);
-        var jsonData = JSON.stringify(jsonObj);
-        console.log(jsonData);
-        gridInit(jsonData);
+        var jsonString = JSON.stringify(jsonObj);
+        //console.log(jsonString);
+
+        gridInit(jsonString, jsonObj);
 
     });
 
 });
 
 
-function gridInit(jsonData) {
+function gridInit(jsonString, jsonObj) {
 
     //-------------------------
     //*** Grid Binding & Events
@@ -26,21 +27,50 @@ function gridInit(jsonData) {
     var gridDatasource = new kendo.data.DataSource({
         transport: {
 
-            read: function (request) {
+            read: function (grid) {
 
-                $('#msg').text('Loading..');
+                $('#msg').text('');
+                $('.spinner').show();
 
-                var ajaxCall = makeAjaxCall('POST', 'purchases', jsonData);
-                ajaxCall.done(function (data) {
-                    //console.log(data);
-                    if (data) {
-                        if (data[0].Result) {
-                            if (data[0].Result == 'OK') {
-                                $('#msg').text('');
-                                request.success(data[0].Data); // bind data to grid
-                            } else if (data[0].Result == 'ERROR') {
-                                $('#msg').text(data[0].ErrMsg);
-                                request.error(); //*** notify kendo datasource that the request has failed
+                //XHR(
+                //    'POST', //*** method
+                //    'purchases', //*** api route
+                //    jsonObj //*** data as JSON Object w/ keys & values
+                //)
+                //.then(
+                //    function (response) {
+                //        //console.log(response);
+                //        if (response[0].Result == 'OK') {
+                //            grid.success(response[0].Data); //*** bind data to grid
+                //        } else if (response[0].Result == 'ERROR') {
+                //            $('#msg').html('<b>Server Error</b><br/>' + response[0].ErrMsg);
+                //            grid.error(); //*** notify kendo datasource that the request has failed
+                //        }
+                //    },
+                //    function (response) {
+                //        $('#msg').html('<b>XHR Error</b><br/>' + response.Message + '<br/>' + response.MessageDetail);
+                //        grid.error(); //*** notify the kendo datasource that the request failed
+                //    }
+                //)
+                //.then(
+                //    function () {
+                //        $('.spinner').hide();
+                //    }
+                //);
+
+                var xhr = jqXHR('POST', 'purchases', 'application/json; charset=utf-8', jsonObj);
+                xhr.always(function (response) {
+                    $('.spinner').hide();
+                    grid.success([]); //** stops the loading effect on empty grid
+                })
+                .done(function (response) {
+                    //console.log(response);
+                    if (response) {
+                        if (response[0].Result) {
+                            if (response[0].Result == 'OK') {
+                                grid.success(response[0].Data); // bind data to grid
+                            } else if (response[0].Result == 'ERROR') {
+                                $('#msg').html('<b>SERVER ERROR</b><br/>' + response[0].ErrMsg);
                             }
                         } else {
                             $('#msg').text('INVALID JSON RETURNED - 2');
@@ -49,10 +79,11 @@ function gridInit(jsonData) {
                         $('#msg').text('INVALID JSON RETURNED - 1');
                     }
                 });
-                ajaxCall.error(function (data) {
-                    request.error(data);
-                });
-
+                //.fail(function (response) {
+                //    console.log(response);
+                //    /* make further ui changes on xhr fail */
+                //});
+                
             } //*** read ends
 
         }, //*** transport ends

@@ -45,23 +45,26 @@ function postData(jsonObj, jsonData) {
     writeMsg($('#response'), 'Waiting response...');
     writeMsg($('#json'), JSON.stringify(jsonObj, null, 4));
 
-    var ajaxCall = makeAjaxCall('POST', 'new-shopper', jsonData);
-    ajaxCall.success(function (responseData) {
-        console.log(responseData);
-        if (responseData[0].Result) {
-            var result = responseData[0].Result;
+    var ajaxCall = makeAjaxCall('POST', 'new-shopper', jsonObj);
+
+    ajaxCall.success(function (response) {
+
+        console.log(response);
+
+        if (response[0].Result) {
+            var result = response[0].Result;
             var msg;
             if (result == 'OK') {
-                msg = 'Success :: New Account ID : ' + responseData[0].NewID;
+                msg = 'Success :: New Account ID : ' + response[0].NewID;
             } else if (result == 'ERROR') {
-                msg = responseData[0].ErrMsg;
+                msg = response[0].ErrMsg;
             }
             writeMsg($('#response'), msg);
         }
         
-        //var dataLength = data.length; //*** 1-based indexing
+        //var dataLength = response.length; //*** 1-based indexing
         //if (dataLength > 0) {
-        //    //var dataArray = data[0];
+        //    //var dataArray = response[0];
         //    //if (dataArray.Error) {
         //    //    writeMsg($('#response'), dataArray.Error);
         //    //} else {

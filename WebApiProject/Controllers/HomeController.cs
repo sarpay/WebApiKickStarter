@@ -126,7 +126,7 @@ namespace WebApiProject.Controllers
             }
             catch (SqlException x) {
                 dict.Add("Result", "ERROR");
-                dict.Add("ErrMsg", "DATABASE: " + x.ToString());
+                dict.Add("ErrMsg", "SQL: " + x.ToString());
             }
             catch (Exception x) {
                 dict.Add("Result", "ERROR");
@@ -225,7 +225,7 @@ namespace WebApiProject.Controllers
             catch (SqlException x)
             {
                 dict.Add("Result", "ERROR");
-                dict.Add("ErrMsg", "DATABASE: " + x.ToString());
+                dict.Add("ErrMsg", "SQL: " + x.ToString());
             }
             catch (Exception x)
             {
