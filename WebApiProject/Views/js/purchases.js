@@ -32,24 +32,23 @@ function gridInit(jsonString, jsonObj) {
                 $('#msg').text('');
                 $('.spinner').show();
 
-                //XHR(
-                //    'POST', //*** method
-                //    'purchases', //*** api route
-                //    jsonObj //*** data as JSON Object w/ keys & values
-                //)
+                /*** REQUIRES ES6 HARMONY PROMISES ***/
+                //XHR('POST', 'purchases', 'application/json; charset=utf-8', jsonObj)
                 //.then(
+                //    /* promise resolved */
                 //    function (response) {
                 //        //console.log(response);
                 //        if (response[0].Result == 'OK') {
                 //            grid.success(response[0].Data); //*** bind data to grid
                 //        } else if (response[0].Result == 'ERROR') {
-                //            $('#msg').html('<b>Server Error</b><br/>' + response[0].ErrMsg);
-                //            grid.error(); //*** notify kendo datasource that the request has failed
+                //            $('#msg').html('<b>SERVER ERROR</b><br/>' + response[0].ErrMsg);
+                //            grid.success([]); //** stops the loading indicator regardless success/fail
                 //        }
                 //    },
+                //    /* promise rejected */
                 //    function (response) {
-                //        $('#msg').html('<b>XHR Error</b><br/>' + response.Message + '<br/>' + response.MessageDetail);
-                //        grid.error(); //*** notify the kendo datasource that the request failed
+                //        //console.log(response);
+                //        grid.success([]); //** stops the loading indicator regardless success/fail
                 //    }
                 //)
                 //.then(
@@ -62,7 +61,7 @@ function gridInit(jsonString, jsonObj) {
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function (response) {
                     $('.spinner').hide();
-                    grid.success([]); //** stops the loading effect on empty grid
+                    grid.success([]); //** stops the loading indicator regardless success/fail
                 })
                 .done(function (response) {
                     //console.log(response);

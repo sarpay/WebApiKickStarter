@@ -98,6 +98,7 @@
     <Content Include="Views\css\styles.css" />
     <Content Include="Views\images\male.png" />
     <Content Include="Views\images\female.png" />
+    <Content Include="Views\js\lib\es6-promise.min.js" />
     <Content Include="Views\js\purchases.js" />
     <Content Include="Views\new-shopper.html" />
     <Content Include="Views\purchases.html" />

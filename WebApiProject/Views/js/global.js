@@ -104,7 +104,7 @@ Expects a request method type (GET, POST, PUT, DELETE..)
 Expects a target route to the web api method (a url)
 Expects an optional data as JSON object. (not string)
 */
-function XHR(requestMethod, targetRoute, data) {
+function XHR(requestMethod, targetRoute, contentType, data) {
 
     var apiRoot = '../api/';
 
@@ -114,31 +114,46 @@ function XHR(requestMethod, targetRoute, data) {
         //** Do the usual XHR stuff
         var xr = new XMLHttpRequest();
 
-        xr.open(requestMethod, apiRoot + targetRoute, true);
+        xr.open(requestMethod, apiRoot + targetRoute, true, null, null);
 
-        xr.setRequestHeader('Accept', 'application/json');
-        xr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+        xr.setRequestHeader('Accept', contentType);
+        xr.setRequestHeader('Content-Type', contentType);
         xr.responseType = "json"; //** return a JavaScript object, parsed from a JSON string returned by the server
         xr.timeout = 60000; //** 60 seconds
         xr.withCredentials = false; //** CORS using credentials such as cookies or authorization headers
 
         xr.onload = function () {
-            //** This is called even on 404 etc.. so check the status
-            if (xr.status == 200) {
-                // Resolve the promise with the response
-                //resolve(JSON.parse(xr.response)); //** use if responseType is not set
-                resolve(xr.response);
-            }
-            else {
-                //** Otherwise reject with the status text
-                //reject(JSON.parse(xr.responseText)); //** use if responseType is not set
-                reject(xr.response);
+            if (xr.status == 200 && xr.statusText == 'OK') {
+                resolve(xr.response); //** Resolve the promise with the response
+            } else { //** Otherwise reject
+                //console.log(xr);
+                $('#msg').html('<b>XHR ERROR</b>');
+                if (xr.status == 500 && xr.response.StackTrace) {
+                    $('#msg').append('<br/>500 : Internal Server Error');
+                    $('#msg').append('<br/><br/><b>Exception Type: </b>' + xr.response.ExceptionType);
+                    $('#msg').append('<br/><br/><b>Exception Message: </b>' + xr.response.ExceptionMessage);
+                    $('#msg').append('<br/><br/><b>Stack Trace: </b>' + xr.response.StackTrace);
+                } else {
+                    $('#msg').append('<br/>' + xr.status + ' : ' + xr.statusText);
+                    $('#msg').append('<br/><br/><b>Message: </b>' + xr.response.Message);
+                    $('#msg').append('<br/><br/><b>Message Detail: </b>' + xr.response.MessageDetail);
+                }
+                reject(xr.response); //** Reject the promise with the response
             }
         };
 
         //** Handle network errors
         xr.onerror = function () {
-            reject(Error("Network Error"));
+            $('#msg').html('<b>XHR ERROR</b>');
+            $('#msg').append('<br/>' + xr.response);
+            reject(xr.response);
+        };
+
+        //** Handle timeout errors
+        xr.ontimeout = function () {
+            $('#msg').html('<b>XHR ERROR</b>');
+            $('#msg').append('<br/>Your request has timed out.');
+            reject(xr.response);
         };
 
         //** Make the request

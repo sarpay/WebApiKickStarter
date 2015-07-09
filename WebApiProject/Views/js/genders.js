@@ -21,36 +21,11 @@ function gridInit() {
                 $('#msg').text('');
                 $('.spinner').show();
 
-                /*** REQUIRES ES6 HARMONY ***/
-                //XHR(
-                //    'GET', //*** method
-                //    'genders', //*** api route
-                //    null //*** params as JSON Object
-                //)
-                //.then(
-                //    function (response) {
-                //        //console.log(response);
-                //        grid.success(response); //*** bind data to grid
-                //        $.each(response[0], function (key, item) {
-                //            $('<li>', { text: item }).appendTo($('ul#genders'));
-                //        });
-                //    },
-                //    function (response) {
-                //        $('#msg').html('<b>XHR Error</b><br/>' + response.Message + '<br/>' + response.MessageDetail);
-                //        grid.error(); //*** notify the kendo datasource that the request failed
-                //    }
-                //)
-                //.then(
-                //    function () {
-                //        $('.spinner').hide();
-                //    }
-                //);
-
                 var xhrPromise = jqXHR('GET', 'genders', 'application/json; charset=utf-8', null);
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function () {
                     $('.spinner').hide();
-                    grid.success([]); //** stops the loading effect on empty grid
+                    grid.success([]); //** stops the loading indicator regardless success/fail
                 })
                 .done(function (response) {
                     //console.log(response);
