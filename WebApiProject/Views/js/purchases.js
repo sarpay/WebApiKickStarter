@@ -74,10 +74,10 @@ function gridInit(jsonString, jsonObj) {
                                 $('#msg').html('<b>SERVER ERROR</b><br/>' + response[0].ErrMsg);
                             }
                         } else {
-                            $('#msg').text('INVALID JSON RETURNED - 2');
+                            $('#msg').text('INVALID JSON RETURNED');
                         }
                     } else {
-                        $('#msg').text('INVALID JSON RETURNED - 1');
+                        $('#msg').text('NULL JSON RETURNED');
                     }
                 });
                 //.fail(function (response) {

@@ -64,7 +64,7 @@ function gridInit() {
                             });
                         }
                     } else {
-                        $('#msg').text('SERVER RETURNED NULL');
+                        $('#msg').text('NULL JSON RETURNED');
                     }
                 });
                 //.fail(function (response) {

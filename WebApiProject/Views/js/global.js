@@ -82,14 +82,14 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
         if (error.status === 0) {
             $('#msg').append('<br/>Your request has timed out or network connection was lost.');
         }
-        else if (error.status == 500) {
-            $('#msg').append('<br/>Internal Server Error [500]');
+        else if (error.status == 500 && error.responseJSON.StackTrace) {
+            $('#msg').append('<br/>500 : Internal Server Error');
             $('#msg').append('<br/><br/><b>Exception Type: </b>' + error.responseJSON.ExceptionType);
             $('#msg').append('<br/><br/><b>Exception Message: </b>' + error.responseJSON.ExceptionMessage);
             $('#msg').append('<br/><br/><b>Stack Trace: </b>' + error.responseJSON.StackTrace);
         }
         else {
-            $('#msg').append('<br/>' + error.statusText);
+            $('#msg').append('<br/>' + error.status + ' : ' + error.statusText);
             $('#msg').append('<br/><br/><b>Message: </b>' + error.responseJSON.Message);
             $('#msg').append('<br/><br/><b>Message Detail: </b>' + error.responseJSON.MessageDetail);
         }
