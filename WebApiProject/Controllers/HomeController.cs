@@ -122,7 +122,7 @@ namespace WebApiProject.Controllers
                 dict.Add("Data", dataList);
                 //dict.Add("Array", dataArray);
                 //dict.Add("ArrayCount", arrayCount);
-                dict.Add("ListCount", listCount);
+                dict.Add("Count", listCount);
             }
             catch (SqlException x) {
                 dict.Add("Result", "ERROR");

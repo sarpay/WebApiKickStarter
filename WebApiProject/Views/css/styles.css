@@ -1,4 +1,9 @@
-﻿body {
+﻿@font-face {
+    font-family: "Open Sans";
+    src: url(../fonts/open-sans/OpenSans-Regular.ttf) format("truetype");
+}
+
+body {
     font-family: 'Open Sans', HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 11px;
 }

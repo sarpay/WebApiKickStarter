@@ -76,22 +76,27 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
         //contentType: 'text/plain' //Text (Plain)
         //contentType: 'text/xml' //XML
     })
+    .success(function () {
+        toastMsg('XHR SUCCESS', 'Successfully resolved request', 'success', 'small');
+    })
     .fail(function (error) {
         //console.log(error);
-        $('#msg').html('<b>XHR ERROR</b>');
+        var responseJSON = error.responseJSON;
+        var msgText = error.status + ' : ' + error.statusText;
         if (error.status === 0) {
-            $('#msg').append('<br/>Your request has timed out or network connection was lost.');
+            msgText += '<br/><br/>Your request has timed out or network connection was lost.';
+            toastMsg('XHR ERROR', msgText, 'error', 'small');
         }
-        else if (error.status == 500 && error.responseJSON.StackTrace) {
-            $('#msg').append('<br/>500 : Internal Server Error');
-            $('#msg').append('<br/><br/><b>Exception Type: </b>' + error.responseJSON.ExceptionType);
-            $('#msg').append('<br/><br/><b>Exception Message: </b>' + error.responseJSON.ExceptionMessage);
-            $('#msg').append('<br/><br/><b>Stack Trace: </b>' + error.responseJSON.StackTrace);
+        else if (error.status === 500 && responseJSON.StackTrace) {
+            msgText += '<br/><br/><b>Exception Type: </b>' + responseJSON.ExceptionType;
+            msgText += '<br/><br/><b>Exception Message: </b>' + responseJSON.ExceptionMessage;
+            msgText += '<br/><br/><b>Stack Trace: </b>' + responseJSON.StackTrace;
+            toastMsg('XHR ERROR', msgText, 'error', 'large');
         }
         else {
-            $('#msg').append('<br/>' + error.status + ' : ' + error.statusText);
-            $('#msg').append('<br/><br/><b>Message: </b>' + error.responseJSON.Message);
-            $('#msg').append('<br/><br/><b>Message Detail: </b>' + error.responseJSON.MessageDetail);
+            msgText += '<br/><br/><b>Message: </b>' + responseJSON.Message;
+            msgText += '<br/><br/><b>Message Detail: </b>' + responseJSON.MessageDetail;
+            toastMsg('XHR ERROR', msgText, 'error', 'small');
         }
     });
 
@@ -104,7 +109,7 @@ Expects a request method type (GET, POST, PUT, DELETE..)
 Expects a target route to the web api method (a url)
 Expects an optional data as JSON object. (not string)
 */
-function XHR(requestMethod, targetRoute, contentType, data) {
+function XHR(requestMethod, targetRoute, requestType, data) {
 
     var apiRoot = '../api/';
 
@@ -116,43 +121,44 @@ function XHR(requestMethod, targetRoute, contentType, data) {
 
         xr.open(requestMethod, apiRoot + targetRoute, true, null, null);
 
-        xr.setRequestHeader('Accept', contentType);
-        xr.setRequestHeader('Content-Type', contentType);
+        xr.setRequestHeader('Accept', requestType);
+        xr.setRequestHeader('Content-Type', requestType);
         xr.responseType = "json"; //** return a JavaScript object, parsed from a JSON string returned by the server
         xr.timeout = 60000; //** 60 seconds
         xr.withCredentials = false; //** CORS using credentials such as cookies or authorization headers
 
         xr.onload = function () {
             if (xr.status == 200 && xr.statusText == 'OK') {
+                toastMsg('XHR SUCCESS', 'Successfully resolved request', 'success', 'small');
                 resolve(xr.response); //** Resolve the promise with the response
             } else { //** Otherwise reject
                 //console.log(xr);
-                $('#msg').html('<b>XHR ERROR</b>');
-                if (xr.status == 500 && xr.response.StackTrace) {
-                    $('#msg').append('<br/>500 : Internal Server Error');
-                    $('#msg').append('<br/><br/><b>Exception Type: </b>' + xr.response.ExceptionType);
-                    $('#msg').append('<br/><br/><b>Exception Message: </b>' + xr.response.ExceptionMessage);
-                    $('#msg').append('<br/><br/><b>Stack Trace: </b>' + xr.response.StackTrace);
+                var msgText = xr.status + ' : ' + xr.statusText;
+                if (xr.status === 500 && xr.response.StackTrace) {
+                    msgText += '<br/><br/><b>Exception Type: </b>' + xr.response.ExceptionType;
+                    msgText += '<br/><br/><b>Exception Message: </b>' + xr.response.ExceptionMessage;
+                    msgText += '<br/><br/><b>Stack Trace: </b>' + xr.response.StackTrace;
+                    toastMsg('XHR ERROR', msgText, 'error', 'large');
                 } else {
-                    $('#msg').append('<br/>' + xr.status + ' : ' + xr.statusText);
-                    $('#msg').append('<br/><br/><b>Message: </b>' + xr.response.Message);
-                    $('#msg').append('<br/><br/><b>Message Detail: </b>' + xr.response.MessageDetail);
+                    msgText += '<br/><br/><b>Message: </b>' + xr.response.Message;
+                    msgText += '<br/><br/><b>Message Detail: </b>' + xr.response.MessageDetail;
+                    toastMsg('XHR ERROR', msgText, 'error', 'small');
                 }
                 reject(xr.response); //** Reject the promise with the response
             }
         };
 
-        //** Handle network errors
+        //** Handle network errors?
         xr.onerror = function () {
-            $('#msg').html('<b>XHR ERROR</b>');
-            $('#msg').append('<br/>' + xr.response);
+            msgText = xr.response;
+            toastMsg('XHR ERROR', msgText, 'error', 'small');
             reject(xr.response);
         };
 
         //** Handle timeout errors
         xr.ontimeout = function () {
-            $('#msg').html('<b>XHR ERROR</b>');
-            $('#msg').append('<br/>Your request has timed out.');
+            msgText = 'Your request has timed out.';
+            toastMsg('XHR ERROR', msgText, 'error', 'small');
             reject(xr.response);
         };
 
@@ -193,5 +199,33 @@ function checkEmailValidation(email) {
     //console.log(email);
     var res = /^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*$/.test(email);
     return res;
+
+}
+
+
+function toastMsg(title, text, icon, boxSize) {
+
+    var hideAfter = (icon == 'error' ? false : 1800);
+
+    $.toast({
+        text: text, // Text that is to be shown in the toast
+        heading: title, // Optional heading to be shown on the toast
+        showHideTransition: 'fade', // fade, slide, plain
+        allowToastClose: true, // Boolean value true, false
+        hideAfter: hideAfter, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+        stack: false, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+        position: 'bottom-left', // bottom-left, bottom-right, bottom-center, top-left, top-right, top-center, mid-center, an object representing the left, right, top, bottom values
+        //bgColor: '#b91713',  // Background color of the toast
+        //textColor: '#f7f7f7',  // Text color of the toast
+        textAlign: 'left',  // Text alignment i.e. left, right, center
+        icon: icon //error, info, warning, success
+        //beforeShow: function () {}, // will be triggered before the toast is shown
+        //afterShown: function () {}, // will be triggered after the toat has been shown
+        //beforeHide: function () {}, // will be triggered before the toast gets hidden
+        //afterHidden: function () {}  // will be triggered after the toast has been hidden
+    });
+
+    var boxSize = (boxSize == 'large' ? boxSize = '800px' : '300px');
+    $('.jq-toast-wrap').css('width', boxSize);
 
 }

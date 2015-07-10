@@ -8,17 +8,15 @@ $(document).ready(function () {
 
         var queryString = $(this).serialize(); //*** serialize all form values
         var jsonObj = convertQueryStringToJSON(queryString);
-        var jsonString = JSON.stringify(jsonObj);
-        //console.log(jsonString);
 
-        gridInit(jsonString, jsonObj);
+        gridInit(jsonObj);
 
     });
 
 });
 
 
-function gridInit(jsonString, jsonObj) {
+function gridInit(jsonObj) {
 
     //-------------------------
     //*** Grid Binding & Events
@@ -29,7 +27,7 @@ function gridInit(jsonString, jsonObj) {
 
             read: function (grid) {
 
-                $('#msg').text('');
+                $.toast().reset('all');
                 $('.spinner').show();
 
                 /*** REQUIRES ES6 HARMONY PROMISES ***/
@@ -41,7 +39,7 @@ function gridInit(jsonString, jsonObj) {
                 //        if (response[0].Result == 'OK') {
                 //            grid.success(response[0].Data); //*** bind data to grid
                 //        } else if (response[0].Result == 'ERROR') {
-                //            $('#msg').html('<b>SERVER ERROR</b><br/>' + response[0].ErrMsg);
+                //            toastMsg('SERVER ERROR', response[0].ErrMsg, 'error', 'large');
                 //            grid.success([]); //** stops the loading indicator regardless success/fail
                 //        }
                 //    },
@@ -65,19 +63,19 @@ function gridInit(jsonString, jsonObj) {
                 })
                 .done(function (response) {
                     //console.log(response);
-                    if (response) {
-                        if (response[0].Result) {
-                            if (response[0].Result == 'OK') {
-                                grid.success(response[0].Data); // bind data to grid
-                            } else if (response[0].Result == 'ERROR') {
-                                $('#msg').html('<b>SERVER ERROR</b><br/>' + response[0].ErrMsg);
-                            }
-                        } else {
-                            $('#msg').text('INVALID JSON RETURNED');
-                        }
-                    } else {
-                        $('#msg').text('NULL JSON RETURNED');
+                    //if (response) {
+                    //    if (response[0].Result) {
+                    if (response[0].Result == 'OK') {
+                        grid.success(response[0].Data); // bind data to grid
+                    } else if (response[0].Result == 'ERROR') {
+                        toastMsg('SERVER ERROR', response[0].ErrMsg, 'error', 'large');
                     }
+                    //    } else {
+                    //        toastMsg('SERVER ERROR', 'INVALID JSON RETURNED', 'error', 'small');
+                    //    }
+                    //} else {
+                    //    toastMsg('SERVER ERROR', 'NULL JSON RETURNED', 'error', 'small');
+                    //}
                 });
                 //.fail(function (response) {
                 //    console.log(response);
