@@ -26,13 +26,6 @@ namespace WebApiProject
         }
 
 
-        public static bool ConvertToBoolean(object value)
-        {
-            bool functionReturnValue = ((string)value == "1" | (short)value == 1);
-            return functionReturnValue;
-        }
-
-
         public static object[] DataTableToArray(DataTable dt)
         {
             object[][] array = new object[1][]; //*** jagged aka array-of-arrays
@@ -54,6 +47,13 @@ namespace WebApiProject
         }
 
 
+        public static bool ConvertToBoolean(object value)
+        {
+            bool functionReturnValue = ((string)value == "1" | (short)value == 1);
+            return functionReturnValue;
+        }
+
+
         public static bool TryConvertTo<T>(string input)
         {
             Object result = null;
@@ -69,5 +69,4 @@ namespace WebApiProject
         }
 
     }
-    
 }

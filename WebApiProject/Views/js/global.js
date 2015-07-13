@@ -205,7 +205,7 @@ function checkEmailValidation(email) {
 
 function toastMsg(title, text, icon, boxSize) {
 
-    var hideAfter = (icon == 'error' ? false : 1800);
+    var hideAfter = (icon == 'error' ? false : 3600);
 
     $.toast({
         text: text, // Text that is to be shown in the toast
@@ -213,7 +213,7 @@ function toastMsg(title, text, icon, boxSize) {
         showHideTransition: 'fade', // fade, slide, plain
         allowToastClose: true, // Boolean value true, false
         hideAfter: hideAfter, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
-        stack: false, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+        stack: 3, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
         position: 'bottom-left', // bottom-left, bottom-right, bottom-center, top-left, top-right, top-center, mid-center, an object representing the left, right, top, bottom values
         //bgColor: '#b91713',  // Background color of the toast
         //textColor: '#f7f7f7',  // Text color of the toast

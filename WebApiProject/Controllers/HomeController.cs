@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -19,10 +20,94 @@ namespace WebApiProject.Controllers
         private DataModel db = new DataModel();
         protected ADONET AdoNet = new ADONET();
 
-
         //*********************************************
         // POST QUERIES USING STORED PROCEDURES
         //*********************************************
+
+        // [URI: api/purchases], [VIEW: purchases.html]
+        [Route("api/sign-in")]
+        [HttpPost]
+        public object[] SignIn(
+            string username,
+            string password)
+        {
+
+            //System.Threading.Thread.Sleep(2000);
+
+            List<object> resultsList = new List<object>();
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+
+            //** hash password
+            password += ConfigurationManager.AppSettings["mySalt"];
+            string moreSalt = BCrypt.Net.BCrypt.GenerateSalt(); // "$2a$10$rBV2JDeWW3.vKyeQcM8fFO"
+            string pwdHash = BCrypt.Net.BCrypt.HashPassword(password, moreSalt);
+
+            try
+            {
+                //** query the database
+                AdoNet.SqlConnect();
+
+                //** specify the stored procedure
+                AdoNet.SqlNewCommand("dbo.getPassword", "sp");
+                //** INs
+                AdoNet.SqlNewParam("Input", "@Username", username, SqlDbType.VarChar, 255);
+                //** OUTs
+                AdoNet.SqlNewParam("Output", "@UserID", null, SqlDbType.Int, 0);
+                AdoNet.SqlNewParam("Output", "@Password", null, SqlDbType.Char, 60);
+                //** Execute SP
+                AdoNet.SqlExecuteCommand();
+                //** Obtain output param's value
+
+                int userId = 0;
+                if (Helpers.TryConvertTo<int>(AdoNet.SqlOutputParamValue("@UserID").ToString())) {
+                    userId = Convert.ToInt32(AdoNet.SqlOutputParamValue("@UserID").ToString());
+                }
+
+                if (userId > 0) {
+                    string hashedPwdFromDB = AdoNet.SqlOutputParamValue("@Password").ToString();
+                    bool passwordsMatch = BCrypt.Net.BCrypt.Verify(password + ConfigurationManager.AppSettings["mySalt"], hashedPwdFromDB);
+                    if (passwordsMatch) {
+                        //** specify the stored procedure
+                        AdoNet.SqlNewCommand("dbo.newTicket", "sp");
+                        //** INs
+                        AdoNet.SqlNewParam("Input", "@UserID", userId, SqlDbType.Int, 0);
+                        //** OUTs
+                        AdoNet.SqlNewParam("Output", "@Ticket", null, SqlDbType.Char, 36);
+                        //** Execute SP
+                        AdoNet.SqlExecuteCommand();
+                        //** Obtain output param's value
+                        string ticket = AdoNet.SqlOutputParamValue("@Ticket").ToString();
+                        // Populate the Dictionary
+                        dict.Add("Result", "OK");
+                        dict.Add("Ticket", ticket);
+                    } else {
+                        dict.Add("Result", "BLOCKED");
+                        dict.Add("Msg", "Wrong Password!");
+                    }
+                } else {
+                    dict.Add("Result", "BLOCKED");
+                    dict.Add("Msg", "No Such User!");
+                }
+            }
+            catch (SqlException x)
+            {
+                dict.Add("Result", "ERROR");
+                dict.Add("ErrMsg", "SQL: " + x.ToString());
+            }
+            catch (Exception x)
+            {
+                dict.Add("Result", "ERROR");
+                dict.Add("ErrMsg", "APP: " + x.ToString());
+            }
+            finally
+            {
+                AdoNet.SqlDisconnect();
+            }
+
+            resultsList.Add(dict);
+            return resultsList.ToArray();
+        }
+
 
         // [URI: api/purchases], [VIEW: purchases.html]
         [Route("api/purchases")]
@@ -56,6 +141,10 @@ namespace WebApiProject.Controllers
                 //*** Fill the List object with DataTable results
                 List<object> dataList = new List<object>();
                 dataList = Helpers.DataTableToList(AdoNet.SqlDataTable);
+
+                //*** Fill the Array object with DataTable results
+                //object[] dataArray = Helpers.DataTableToArray(AdoNet.SqlDataTable);
+                //int arrayCount = dataArray.Count();
 
                 //*** Custom Sorting
                 //dataList.Sort();
@@ -114,9 +203,6 @@ namespace WebApiProject.Controllers
 
                 }
 
-                //object[] dataArray = Helpers.DataTableToArray(AdoNet.SqlDataTable);
-                //int arrayCount = dataArray.Count();
-
                 // Populate the Dictionary
                 dict.Add("Result", "OK");
                 dict.Add("Data", dataList);
@@ -154,10 +240,23 @@ namespace WebApiProject.Controllers
 
             //System.Threading.Thread.Sleep(2000);
 
+            //** create objects that hold the output data
             List<object> list = new List<object>();
             Dictionary<string, object> dict = new Dictionary<string, object>();
-
             int acct_id = 0;
+
+            //** make modifications on posted data (ready for db)
+            object gender_db_ix;
+            if (gender_ix == null) {
+                gender_db_ix = DBNull.Value;
+            } else {
+                gender_db_ix = gender_ix;
+            }
+
+            //** hash password
+            pwd += ConfigurationManager.AppSettings["mySalt"];
+            string moreSalt = BCrypt.Net.BCrypt.GenerateSalt(); // "$2a$10$rBV2JDeWW3.vKyeQcM8fFO"
+            string pwdHash = BCrypt.Net.BCrypt.HashPassword(pwd, moreSalt);
 
             try
             {
@@ -177,7 +276,7 @@ namespace WebApiProject.Controllers
                     new SqlParameter() {
                         ParameterName = "Password",
                         SqlDbType = SqlDbType.NVarChar,
-                        Value = pwd,
+                        Value = pwdHash,
                         Direction = ParameterDirection.Input
                     }
                 };
@@ -206,7 +305,7 @@ namespace WebApiProject.Controllers
                     new SqlParameter() {
                         ParameterName = "GenderIX",
                         SqlDbType = SqlDbType.TinyInt,
-                        Value = gender_ix,
+                        Value = gender_db_ix,
                         Direction = ParameterDirection.Input
                     },
                     new SqlParameter() {

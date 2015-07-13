@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[newAccount]
 
 	@Email VARCHAR(255),
-	@Password NVARCHAR(50),
+	@Password CHAR(60),
 
 	@NewID INT = NULL OUTPUT
 		
