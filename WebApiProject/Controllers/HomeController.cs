@@ -37,10 +37,8 @@ namespace WebApiProject.Controllers
             List<object> resultsList = new List<object>();
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
-            //** hash password
+            //** make modifications on posted data (ready for db)
             password += ConfigurationManager.AppSettings["mySalt"];
-            string moreSalt = BCrypt.Net.BCrypt.GenerateSalt(); // "$2a$10$rBV2JDeWW3.vKyeQcM8fFO"
-            string pwdHash = BCrypt.Net.BCrypt.HashPassword(password, moreSalt);
 
             try
             {
@@ -65,7 +63,7 @@ namespace WebApiProject.Controllers
 
                 if (userId > 0) {
                     string hashedPwdFromDB = AdoNet.SqlOutputParamValue("@Password").ToString();
-                    bool passwordsMatch = BCrypt.Net.BCrypt.Verify(password + ConfigurationManager.AppSettings["mySalt"], hashedPwdFromDB);
+                    bool passwordsMatch = BCrypt.Net.BCrypt.Verify(password, hashedPwdFromDB);
                     if (passwordsMatch) {
                         //** specify the stored procedure
                         AdoNet.SqlNewCommand("dbo.newTicket", "sp");
