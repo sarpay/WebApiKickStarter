@@ -37,7 +37,7 @@ namespace WebApiProject.Controllers
             List<object> resultsList = new List<object>();
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
-            //** make modifications on posted data (ready for db)
+            //** make modifications on posted data (ready user input for db)
             password += ConfigurationManager.AppSettings["mySalt"];
 
             try
@@ -243,14 +243,6 @@ namespace WebApiProject.Controllers
             Dictionary<string, object> dict = new Dictionary<string, object>();
             int acct_id = 0;
 
-            //** make modifications on posted data (ready for db)
-            object gender_db_ix;
-            if (gender_ix == null) {
-                gender_db_ix = DBNull.Value;
-            } else {
-                gender_db_ix = gender_ix;
-            }
-
             //** hash password
             pwd += ConfigurationManager.AppSettings["mySalt"];
             string moreSalt = BCrypt.Net.BCrypt.GenerateSalt(); // "$2a$10$rBV2JDeWW3.vKyeQcM8fFO"
@@ -303,7 +295,7 @@ namespace WebApiProject.Controllers
                     new SqlParameter() {
                         ParameterName = "GenderIX",
                         SqlDbType = SqlDbType.TinyInt,
-                        Value = gender_db_ix,
+                        Value = Helpers.ConvertToDbNullWhenNull(gender_ix),
                         Direction = ParameterDirection.Input
                     },
                     new SqlParameter() {

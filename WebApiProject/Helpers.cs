@@ -54,6 +54,12 @@ namespace WebApiProject
         }
 
 
+        public static object ConvertToDbNullWhenNull(object obj)
+        {
+            return (obj == null ? DBNull.Value : obj);
+        }
+
+
         public static bool TryConvertTo<T>(string input)
         {
             Object result = null;
