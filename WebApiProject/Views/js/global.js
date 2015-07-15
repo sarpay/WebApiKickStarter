@@ -177,7 +177,7 @@ function convertQueryStringToJSON(qs) {
     var result = {};
     pairs.forEach(function (pair) {
         pair = pair.split('=');
-        result[pair[0]] = decodeURIComponent(pair[1] || '');
+        result[pair[0]] = decodeURIComponent(pair[1].replace(/\+/g, ' ') || ''); /* replace + with space ' ' */
     });
 
     return JSON.parse(JSON.stringify(result));
@@ -229,3 +229,139 @@ function toastMsg(title, text, icon, boxSize) {
     $('.jq-toast-wrap').css('width', boxSize);
 
 }
+
+
+function getQueryParamValByName(name) {
+
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.search);
+    if (results == null)
+        return 0;
+    else
+        return decodeURIComponent(results[1].replace(/\+/g, " "));
+
+}
+
+
+function parseQueryParamsToObject(query) {
+
+    /*
+    ------
+    USAGE:
+    ------
+    var params = parseQuery(queryString);
+    if (typeof params.src != 'undefined') {
+        if (params.src.length > 0) {
+            document.write('<iframe id="' + params.id + '" src="' + params.src + '" width="' + params.width + 
+                '" height="' + params.height + '" scrolling="no" frameborder="0" class="noScrolling"></iframe>');
+        }
+    }
+    */
+    var params = new Object();
+    if (!query) return params; // return empty object
+
+    var pairs = query.split(/[;&]/);
+    for (var i = 0; i < pairs.length; i++) {
+        var keyVal = pairs[i].split('=');
+        if (!keyVal || keyVal.length != 2) continue;
+        var key = unescape(keyVal[0]);
+        var val = unescape(keyVal[1]);
+        val = val.replace(/\+/g, ' ');
+        params[key] = val;
+    }
+
+    return params;
+
+}
+
+
+function setStylesheet(styleName) {
+
+    if (document.createStyleSheet) {
+        document.createStyleSheet('styles/' + styleName);
+    }
+    else {
+        $("head").append($("<link rel=\"stylesheet\" href=\"styles/" + styleName + "\" type=\"text/css\" media=\"screen\" />"));
+    }
+
+}
+
+
+function setStorageItem(key, value, type) {
+
+    if (typeof (Storage) !== 'undefined') {
+        if (window[type + 'Storage']) {
+            var storage = window[type + 'Storage'];
+            storage.setItem(storageKeyPrefix + key, value);
+            //console.log(storage.getItem(storageKeyPrefix + key));
+        }
+    } else {
+        if (type == 'local') {
+            $.cookie(storageKeyPrefix + key, value, { expires: 3650 }); /*expires in 10 years*/
+        } else {
+            $.cookie(storageKeyPrefix + key, value); /*expires at the end of session - time is not specified*/
+        }
+    }
+
+}
+
+
+function getStorageItem(key, type) {
+
+    var item = null;
+
+    if (typeof (Storage) !== 'undefined') {
+        if (window[type + 'Storage']) {
+            var storage = window[type + 'Storage'];
+            item = storage.getItem(storageKeyPrefix + key);
+            //console.log(item);
+        }
+    } else {
+        item = $.cookie(storageKeyPrefix + key);
+    }
+
+    return item;
+
+}
+
+
+function removeStorageItem(key, type) {
+
+    if (typeof (Storage) !== 'undefined') {
+        if (window[type + 'Storage']) {
+            var storage = window[type + 'Storage'];
+            storage.removeItem(storageKeyPrefix + key);
+        }
+    } else {
+        $.cookie(storageKeyPrefix + key, null);
+    }
+
+}
+
+
+function clearStorageItems() {
+
+    //removeStorageItem('username', 'local');
+    removeStorageItem('ticket', 'session');
+
+}
+
+
+Array.prototype.remove_by_value = function () {
+
+    //*** remove an item from an array with the value of 'xxx'
+    //*** usage: names.remove_by_value('xxx');
+    var what, a = arguments, m = a.length, ax;
+
+    while (m && this.length) {
+        what = a[--m];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+
+    return this;
+
+};
