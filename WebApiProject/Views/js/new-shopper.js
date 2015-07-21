@@ -6,9 +6,8 @@
 
         var queryString = $(this).serialize(); //*** serialize all form values
         var jsonObj = convertQueryStringToJSON(queryString);
-        var jsonData = JSON.stringify(jsonObj);
 
-        postData(jsonObj, jsonData);
+        postData(jsonObj);
         
     });
 
@@ -25,9 +24,8 @@ function submitRawJsonData() {
 
     var jsonText = document.getElementById('raw-json').value;
     var jsonObj = JSON.parse(jsonText);
-    var jsonData = JSON.stringify(jsonObj);
 
-    postData(jsonObj, jsonData);
+    postData(jsonObj);
     
 }
 
@@ -40,39 +38,37 @@ function writeMsg($obj, text) {
 }
 
 
-function postData(jsonObj, jsonData) {
+function postData(jsonObj) {
 
-    writeMsg($('#response'), 'Waiting response...');
     writeMsg($('#json'), JSON.stringify(jsonObj, null, 4));
 
-    var ajaxCall = makeAjaxCall('POST', 'new-shopper', jsonObj);
-
-    ajaxCall.success(function (response) {
-
-        console.log(response);
-
-        if (response[0].Result) {
-            var result = response[0].Result;
-            var msg;
-            if (result == 'OK') {
-                msg = 'Success :: New Account ID : ' + response[0].NewID;
-            } else if (result == 'ERROR') {
-                msg = response[0].ErrMsg;
+    $.toast().reset('all');
+    $('.spinner').show();
+    
+    var xhrPromise = jqXHR('POST', 'new-shopper', 'application/json; charset=utf-8', jsonObj);
+    xhrPromise /* promise callbacks are executed in order */
+    .always(function (response) {
+        $('.spinner').hide();
+    })
+    .done(function (response) {
+        //console.log(response);
+        if (response) {
+            if (response[0].Result) {
+                if (response[0].Result == 'OK') {
+                    toastMsg('SUCCESS', 'New Account ID : ' + response[0].NewID, 'success', 'small');
+                } else if (response[0].Result == 'ERROR') {
+                    toastMsg('SERVER ERROR', response[0].ErrMsg, 'error', 'large');
+                }
+            } else {
+                toastMsg('MESSAGE', 'INVALID JSON RETURNED', 'error', 'small');
             }
-            writeMsg($('#response'), msg);
+        } else {
+            toastMsg('MESSAGE', 'NULL JSON RETURNED', 'error', 'small');
         }
-        
-        //var dataLength = response.length; //*** 1-based indexing
-        //if (dataLength > 0) {
-        //    //var dataArray = response[0];
-        //    //if (dataArray.Error) {
-        //    //    writeMsg($('#response'), dataArray.Error);
-        //    //} else {
-        //        writeMsg($('#response'), 'Success!');// New row id: ' + dataArray.SignID);
-        //    //}
-        //} else {
-        //    //*** ajax call returned nothing
-        //}
     });
+    //.fail(function (response) {
+    //    console.log(response);
+    //    /* make further ui changes on xhr fail */
+    //});
 
 }

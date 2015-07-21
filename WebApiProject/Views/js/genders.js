@@ -18,7 +18,7 @@ function gridInit() {
 
             read: function (grid) {
 
-                $('#msg').text('');
+                $.toast().reset('all');
                 $('.spinner').show();
 
                 var xhrPromise = jqXHR('GET', 'genders', 'application/json; charset=utf-8', null);
@@ -32,14 +32,14 @@ function gridInit() {
                     if (response) {
                         grid.success(response); // bind data to grid
                         if (!response[0]) {
-                            $('#msg').text('SERVER RETURNED EMPTY JSON');
+                            toastMsg('Message', 'SERVER RETURNED EMPTY JSON', 'warning', 'small');
                         } else {
                             $.each(response[0], function (key, item) {
                                 $('<li>', { text: item }).appendTo($('ul#genders'));
                             });
                         }
                     } else {
-                        $('#msg').text('NULL JSON RETURNED');
+                        toastMsg('Message', 'NULL JSON RETURNED', 'warning', 'small');
                     }
                 });
                 //.fail(function (response) {

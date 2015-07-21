@@ -27,26 +27,32 @@ function gridInit(acct_id) {
     var gridDatasource = new kendo.data.DataSource({
         transport: {
 
-            read: function (request) {
+            read: function (grid) {
 
-                $('#msg').text('Loading..');
+                $.toast().reset('all');
+                $('.spinner').show();
 
-                var ajaxCall = makeAjaxCall('GET', 'shopper', acct_id);
-                ajaxCall.done(function (data) {
-                    if (data) {
-                        request.success(data); // bind data to grid
-                        if (!data[0]) {
-                            $('#msg').text('SERVER RETURNED EMPTY JSON');
-                        } else {
-                            $('#msg').text('');
+                var xhrPromise = jqXHR('GET', 'shopper', 'application/json; charset=utf-8', acct_id);
+                xhrPromise /* promise callbacks are executed in order */
+                .always(function () {
+                    $('.spinner').hide();
+                    grid.success([]); //** stops the loading indicator regardless success/fail
+                })
+                .done(function (response) {
+                    //console.log(response);
+                    if (response) {
+                        grid.success(response); // bind data to grid
+                        if (!response[0]) {
+                            toastMsg('Message', 'SERVER RETURNED EMPTY JSON', 'warning', 'small');
                         }
                     } else {
-                        $('#msg').text('SERVER RETURNED EMPTY JSON');
+                        toastMsg('Message', 'SERVER RETURNED EMPTY JSON', 'warning', 'small');
                     }
                 });
-                ajaxCall.error(function (data) {
-                    request.error(data); //*** notify the kendo datasource that the request failed
-                });
+                //.fail(function (response) {
+                //    console.log(response);
+                //    /* make further ui changes on xhr fail */
+                //});
 
             } //*** read ends
 

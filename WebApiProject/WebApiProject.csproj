@@ -103,7 +103,9 @@
     <Content Include="Views\css\styles.css" />
     <Content Include="Views\css\jquery.toast.css" />
     <Content Include="Views\css\jquery.toast.min.css" />
+    <Content Include="Views\js\new-purchase.js" />
     <Content Include="Views\js\sign-in.js" />
+    <Content Include="Views\new-purchase.html" />
     <Content Include="Views\sign-in.html" />
     <Content Include="Views\images\male.png" />
     <Content Include="Views\images\female.png" />
@@ -161,6 +163,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
+    <Compile Include="Models\RequestParams\newPurchase.cs" />
     <Compile Include="Models\Tables\Accounts.cs" />
     <Compile Include="Models\DataModel.cs" />
     <Compile Include="Models\Tables\Genders.cs" />
@@ -168,8 +171,8 @@
     <Compile Include="Models\Tables\Purchases.cs" />
     <Compile Include="Models\Tables\Shoppers.cs" />
     <Compile Include="Models\Views\getShoppers.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PostParameterBinding.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

@@ -11,7 +11,9 @@ using System.Data.SqlClient;
 using WebApiProject.Models;
 using WebApiProject.Models.Tables;
 using WebApiProject.Models.Views;
+using WebApiProject.Models.RequestParams;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace WebApiProject.Controllers
 {
@@ -21,17 +23,80 @@ namespace WebApiProject.Controllers
         protected ADONET AdoNet = new ADONET();
 
         //*********************************************
+        // PUT QUERIES USING STORED PROCEDURES
+        //*********************************************
+
+        // [URI: api/new-purchase], [VIEW: new-purchase.html]
+        [Route("api/new-purchase")]
+        [HttpPut]
+        public object[] NewPurchase(
+            string data)
+        {
+            //System.Threading.Thread.Sleep(2000);
+
+            var newPurchase = JsonConvert.DeserializeObject<IEnumerable<newPurchase>>(data);
+
+            /** create objects that hold the output data **/
+            List<object> resultsList = new List<object>();
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+
+            //try
+            //{
+            //    //** query the database
+            //    AdoNet.SqlConnect();
+
+            //    //** specify the stored procedure
+            //    AdoNet.SqlNewCommand("dbo.newPurchase", "sp");
+            //    //** INs
+            //    AdoNet.SqlNewParam("Input", "@AccountID", acct_id, SqlDbType.Int, 0);
+            //    AdoNet.SqlNewParam("Input", "@GoodID", good_id, SqlDbType.Int, 0);
+            //    //** OUTs
+            //    AdoNet.SqlNewParam("Output", "@NewID", null, SqlDbType.Int, 0);
+            //    //** Execute SP
+            //    AdoNet.SqlExecuteCommand();
+            //    //** Obtain output param's value
+
+            //    int newId = 0;
+            //    if (Helpers.TryConvertTo<int>(AdoNet.SqlOutputParamValue("@NewID").ToString()))
+            //    {
+            //        newId = Convert.ToInt32(AdoNet.SqlOutputParamValue("@NewID").ToString());
+            //    }
+
+            //    dict.Add("Result", "OK");
+            //    dict.Add("NewID", newId);
+            //}
+            //catch (SqlException x)
+            //{
+            //    dict.Add("Result", "ERROR");
+            //    dict.Add("ErrMsg", "SQL: " + x.ToString());
+            //}
+            //catch (Exception x)
+            //{
+            //    dict.Add("Result", "ERROR");
+            //    dict.Add("ErrMsg", "APP: " + x.ToString());
+            //}
+            //finally
+            //{
+            //    AdoNet.SqlDisconnect();
+            //}
+
+            resultsList.Add(dict);
+            return resultsList.ToArray();
+
+        }
+
+
+        //*********************************************
         // POST QUERIES USING STORED PROCEDURES
         //*********************************************
 
-        // [URI: api/purchases], [VIEW: purchases.html]
+            // [URI: api/purchases], [VIEW: purchases.html]
         [Route("api/sign-in")]
         [HttpPost]
         public object[] SignIn(
             string username,
             string password)
         {
-
             //System.Threading.Thread.Sleep(2000);
 
             List<object> resultsList = new List<object>();
@@ -112,8 +177,8 @@ namespace WebApiProject.Controllers
         [HttpPost]
         public object[] GetPurchases(
             int? good_id,
-            byte? gender_ix) {
-
+            byte? gender_ix)
+        {
             //System.Threading.Thread.Sleep(2000);
 
             List<object> resultsList = new List<object>();
@@ -195,8 +260,10 @@ namespace WebApiProject.Controllers
                     //*** modify Gender column with custom html
                     if (colDict["ShopperGender"] == "Male") {
                         colDict["ShopperGender"] = "<img src=\"images/male.png\" style=\"width: 20px; height: 20px\" />";
-                    } else {
+                    } else if (colDict["ShopperGender"] == "Female") {
                         colDict["ShopperGender"] = "<img src=\"images/female.png\" style=\"width: 20px; height: 20px\" />";
+                    } else {
+                        colDict["ShopperGender"] = "NULL";
                     }
 
                 }
@@ -225,7 +292,7 @@ namespace WebApiProject.Controllers
         }
 
 
-        // [URI: api/new-shopper?action=insert], [VIEW: new-shopper.html]
+        /** [URI: api/new-shopper?action=insert], [VIEW: new-shopper.html] **/
         [Route("api/new-shopper")]
         [HttpPost]
         public object[] NewShopper(
@@ -234,18 +301,18 @@ namespace WebApiProject.Controllers
             string name,
             byte? gender_ix,
             bool opt_in,
-            string action = null) {
-
+            string action = null)
+        {
             //System.Threading.Thread.Sleep(2000);
 
-            //** create objects that hold the output data
+            /** create objects that hold the output data **/
             List<object> list = new List<object>();
             Dictionary<string, object> dict = new Dictionary<string, object>();
             int acct_id = 0;
 
-            //** hash password
+            /** hash password **/
             pwd += ConfigurationManager.AppSettings["mySalt"];
-            string moreSalt = BCrypt.Net.BCrypt.GenerateSalt(); // "$2a$10$rBV2JDeWW3.vKyeQcM8fFO"
+            string moreSalt = BCrypt.Net.BCrypt.GenerateSalt(); /* looks like : $2a$10$rBV2JDeWW3.vKyeQcM8fFO */
             string pwdHash = BCrypt.Net.BCrypt.HashPassword(pwd, moreSalt);
 
             try
@@ -274,8 +341,8 @@ namespace WebApiProject.Controllers
                 int exec_sp1 = db.Database.ExecuteSqlCommand(
                     "dbo.newAccount @Email, @Password, @NewID out", params_sp1);
 
-                //*** obtain output paramater's (@NewID) value
-                acct_id = (int)params_sp1[0].Value; //*** [0] is the index number of the output param
+                /** obtain output paramater's (@NewID) value **/
+                acct_id = (int)params_sp1[0].Value; /** [0] is the index number of the output param **/
 
 
                 SqlParameter[] params_sp2 = {
@@ -330,27 +397,30 @@ namespace WebApiProject.Controllers
         }
 
 
-        //*********************************************
-        // GET QUERIES USING STORED PROCEDURES
-        //*********************************************
+        /*********************************************/
+        /* GET QUERIES USING STORED PROCEDURES */
+        /*********************************************/
 
-        // [URI: api/shoppers], [VIEW: shoppers.html]
+        /** [URI: api/shoppers?gender_ix=1&opt_in=1&_=1111], [VIEW: shoppers.html] **/
         [Route("api/shoppers")]
-        public IEnumerable<getShoppers> GetShoppersFromView()
-        {
-            //try
+        [HttpGet]
+        public IEnumerable<getShoppers> GetShoppersFromView(
+            byte? gender_ix, 
+            byte? opt_in)
+        {    
+            //try /** DO NOT USE TRY-CATCH HERE SINCE FUNCTION RETURNS AN ENTITY MODEL **/
             //{
             SqlParameter[] sp = {
                 new SqlParameter() {
                     ParameterName = "GenderIX",
                     SqlDbType = SqlDbType.TinyInt,
-                    Value = DBNull.Value,
+                    Value = Helpers.ConvertToDbNullWhenNull(gender_ix),
                     Direction = ParameterDirection.Input
                 },
                 new SqlParameter() {
                     ParameterName = "OptIn",
                     SqlDbType = SqlDbType.Bit,
-                    Value = DBNull.Value,
+                    Value = Helpers.ConvertToDbNullWhenNull(opt_in),
                     Direction = ParameterDirection.Input
                 }
             };
@@ -379,9 +449,10 @@ namespace WebApiProject.Controllers
 
         // [URI: api/shopper/1], [VIEW: shopper.html]
         [Route("api/shopper/{acct_id}")]
-        public IEnumerable<getShoppers> GetShopperFromView(int acct_id)
+        [HttpGet]
+        public IEnumerable<getShoppers> GetShopperFromView(
+            int acct_id)
         {
-
             SqlParameter[] sp = {
                 new SqlParameter() {
                     ParameterName = "AccountID",
@@ -411,6 +482,7 @@ namespace WebApiProject.Controllers
 
         // [URI: api/genders], [VIEW: genders.html]
         [Route("api/genders")]
+        [HttpGet]
         public IQueryable<Genders> GetGendersFromTable()
         {
             return db.Genders;
@@ -418,8 +490,10 @@ namespace WebApiProject.Controllers
 
         // [URI: api/gender/1], [VIEW: gender.html]
         [Route("api/gender/{ix}")]
+        [HttpGet]
         [ResponseType(typeof(Genders))]
-        public IHttpActionResult GetGendersFromTable(byte? ix)
+        public IHttpActionResult GetGenderFromTable(
+            byte ix)
         {
             Genders genders = db.Genders.Find(ix);
             //if (genders == null)

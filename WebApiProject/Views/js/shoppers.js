@@ -1,13 +1,20 @@
-﻿var GRID;
+﻿$(document).ready(function () {
 
-$(document).ready(function () {
+    $('form').submit(function (event) {
 
-    gridInit();
+        event.preventDefault();
+
+        var queryString = $(this).serialize(); //*** serialize all form values
+        //var jsonObj = convertQueryStringToJSON(queryString);
+        //console.log(jsonObj);
+        gridInit(queryString);
+
+    });
 
 });
 
 
-function gridInit() {
+function gridInit(queryString) {
 
     //-------------------------
     //*** Grid Binding & Events
@@ -16,50 +23,31 @@ function gridInit() {
     var gridDatasource = new kendo.data.DataSource({
         transport: {
 
-            read: function (request) {
+            read: function (grid) {
 
-                $('#msg').text('Loading..');
+                $.toast().reset('all');
+                $('.spinner').show();
 
-                var ajaxCall = makeAjaxCall('GET', 'shoppers', ''); //*** does not expect any params.
-                ajaxCall.done(function (data) {
-                    //$.each(data, function (key, item) {
-                    //    $('<li>', { text: formatItem(item) }).appendTo($('ul#genders'));
-                    //});
-                    if (data) {
-                        request.success(data); // bind data to grid
-                        if (!data[0]) {
+                var xhrPromise = jqXHR('GET-QS', 'shoppers', 'application/json; charset=utf-8', queryString);
+                xhrPromise /* promise callbacks are executed in order */
+                .always(function (response) {
+                    $('.spinner').hide();
+                    grid.success([]); //** stops the loading indicator regardless success/fail
+                })
+                .done(function (response) {
+                    if (response) {
+                        grid.success(response); // bind data to grid
+                        if (!response[0]) {
                             //console.log('SERVER RETURNED EMPTY JSON');
-                            $('#msg').text('SERVER RETURNED EMPTY JSON');
-                        } else {
-                            $('#msg').text('');
+                            toastMsg('Message', 'SERVER RETURNED EMPTY JSON', 'warning', 'small');
                         }
                     } else {
-                        $('#msg').text('SERVER RETURNED EMPTY JSON');
+                        toastMsg('Message', 'SERVER RETURNED EMPTY JSON', 'warning', 'small');
                     }
                 });
-                ajaxCall.error(function (data) {
-                    request.error(data); //*** notify the kendo datasource that the request failed
-                });
-
-                //PARAMS = {};
-                ////PARAMS.Ticket = TICKET;
-                //PARAMS_JSON = JSON.stringify(PARAMS);
-
-                //var ajaxCall = makeAjaxCall('GET', GET_SHOPPERS, PARAMS_JSON);
-                //ajaxCall.success(function (responseJsonData) {
-                //    //console.log(responseJsonData);
-                //    request.success(responseJsonData); // notify the kendo datasource that the request succeeded
-                //    if (responseJsonData[0]) {
-                //        var response = responseJsonData[0];
-                //        if (response.ID == 0) { //*** if response is NOT undefined
-                //            console.log(response.Email); //*** used for debugging and authentication failure action
-                //        } else {
-
-                //        }
-                //    }
-                //});
-                //ajaxCall.error(function (responseJsonData) {
-                //    request.error(responseJsonData); //*** notify the kendo datasource that the request failed
+                //.fail(function (response) {
+                //    console.log(response);
+                //    /* make further ui changes on xhr fail */
                 //});
 
             } //*** read ends

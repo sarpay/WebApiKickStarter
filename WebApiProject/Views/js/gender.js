@@ -27,25 +27,29 @@ function gridInit(gender_ix) {
     var gridDatasource = new kendo.data.DataSource({
         transport: {
 
-            read: function (request) {
+            read: function (grid) {
 
-                $('#msg').text('Loading..');
+                $.toast().reset('all');
+                $('.spinner').show();
 
-                var ajaxCall = makeAjaxCall('GET', 'gender', gender_ix);
-                ajaxCall.done(function (data) {
-                    if (data) {
-                        request.success([data]); // bind data to grid
-                        if (!data[0]) {
-                            $('#msg').text('SERVER RETURNS ONLY 1 RECORD');
-                        }
+                var xhrPromise = jqXHR('GET', 'gender', 'application/json; charset=utf-8', gender_ix);
+                xhrPromise /* promise callbacks are executed in order */
+                .always(function () {
+                    $('.spinner').hide();
+                    grid.success([]); //** stops the loading indicator regardless success/fail
+                })
+                .done(function (response) {
+                    //console.log(response);
+                    if (response) {
+                        grid.success([response]); // bind data to grid
                     } else {
-                        request.success([]);
-                        $('#msg').text('SERVER RETURNED EMPTY JSON');
+                        toastMsg('Message', 'SERVER RETURNED EMPTY JSON', 'warning', 'small');
                     }
                 });
-                ajaxCall.error(function (data) {
-                    request.error([data]); //*** notify the kendo datasource that the request failed
-                });
+                //.fail(function (response) {
+                //    console.log(response);
+                //    /* make further ui changes on xhr fail */
+                //});
 
             } //*** read ends
 

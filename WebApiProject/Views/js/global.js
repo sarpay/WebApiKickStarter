@@ -41,8 +41,14 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
             url += (data ? '/' + data : '');
             if (!data) { data = ''; }
             break;
+        case 'GET-QS':
+            requestMethod = 'GET';
+            break;
         case 'POST':
             data = JSON.stringify(data);
+            break;
+        case 'PUT':
+            data = '{"data":"' + JSON.stringify(data) + '"}';
             break;
     }
 

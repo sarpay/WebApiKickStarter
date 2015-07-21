@@ -10,10 +10,7 @@ namespace WebApiProject
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
-
-            // Web API routes
-            config.MapHttpAttributeRoutes();
+            config.MapHttpAttributeRoutes(); /*Enables attribute routing. Routing is how Web API matches a URI to an action.*/
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
