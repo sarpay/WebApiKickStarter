@@ -30,7 +30,7 @@ namespace WebApiProject.Controllers
         [API URI: /new-purchase]
         [VIEW: /views/new-purchase.html]
         DOES NOT REQUIRE PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
-        HttpPut is not covered by this configuration (commented out line : 87)
+        BECAUSE [HttpPut] IS NOT COVERED BY THIS CONFIGURATION (commented out line : 87)
         */
         [Route("new-purchase")]
         [HttpPut]
@@ -98,6 +98,8 @@ namespace WebApiProject.Controllers
         /*
         [API URI: /sign-in]
         [VIEW: /views/sign-in.html]
+        REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
+        HttpPost is manipulated by this configuration
         */
         [Route("sign-in")]
         [HttpPost]

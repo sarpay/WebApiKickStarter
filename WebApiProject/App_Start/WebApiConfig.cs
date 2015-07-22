@@ -13,7 +13,7 @@ namespace WebApiProject
             config.MapHttpAttributeRoutes(); /*Enables attribute routing. Routing is how Web API matches a URI to an action.*/
 
             config.Routes.MapHttpRoute(
-                name: "DefaultRoute",
+                name: "Simple-GET-Route",
                 routeTemplate: "{action}/{id}",/*{controller}*/
                 defaults: new { controller = "Home", id = RouteParameter.Optional }
             );
