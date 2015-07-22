@@ -29,6 +29,8 @@ namespace WebApiProject.Controllers
         /*
         [API URI: /new-purchase]
         [VIEW: /views/new-purchase.html]
+        DOES NOT REQUIRE PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
+        HttpPut is not covered by this configuration (commented out line : 87)
         */
         [Route("new-purchase")]
         [HttpPut]
@@ -36,7 +38,7 @@ namespace WebApiProject.Controllers
         {
             //System.Threading.Thread.Sleep(2000);
             
-            // dynamic input from inbound JSON
+            /** obtain param values from the incoming json object **/
             dynamic newPurchase = jsonData;
             int acct_id = newPurchase.acct_id;
             int good_id = newPurchase.good_id;
@@ -46,26 +48,27 @@ namespace WebApiProject.Controllers
 
             try
             {
-                //** query the database
+                /** query the database **/
                 AdoNet.SqlConnect();
 
-                //** specify the stored procedure
+                /** specify the stored procedure **/
                 AdoNet.SqlNewCommand("dbo.newPurchase", "sp");
-                //** INs
+                /** INs **/
                 AdoNet.SqlNewParam("Input", "@AccountID", acct_id, SqlDbType.Int, 0);
                 AdoNet.SqlNewParam("Input", "@GoodID", good_id, SqlDbType.Int, 0);
-                //** OUTs
+                /** OUTs **/
                 AdoNet.SqlNewParam("Output", "@NewID", null, SqlDbType.Int, 0);
-                //** Execute SP
+                /** Execute SP **/
                 AdoNet.SqlExecuteCommand();
-                //** Obtain output param's value
-
+                
+                /** Obtain output params' values **/
                 int newId = 0;
                 if (Helpers.TryConvertTo<int>(AdoNet.SqlOutputParamValue("@NewID").ToString()))
                 {
                     newId = Convert.ToInt32(AdoNet.SqlOutputParamValue("@NewID").ToString());
                 }
 
+                /** populate the output object **/
                 jsonOutput.Result = "OK";
                 jsonOutput.NewID = newId;
             }
