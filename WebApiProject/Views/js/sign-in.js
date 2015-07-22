@@ -25,19 +25,19 @@ function signIn(jsonObj) {
         $('.spinner').hide();
     })
     .done(function (response) {
-        //console.log(response);
+        console.log(response);
         if (response) {
-            if (response[0].Result) {
-                if (response[0].Result == 'OK') {
-                    toastMsg('SIGN-IN SUCCESS', response[0].Ticket, 'success', 'small');
-                } else if (response[0].Result == 'BLOCKED') {
-                    toastMsg('SIGN-IN FAILED', response[0].Msg, 'warning', 'small');
-                } else if (response[0].Result == 'ERROR') {
-                    toastMsg('SERVER ERROR', response[0].ErrMsg, 'error', 'large');
+            //if (response[0].Result) {
+                if (response.Result == 'OK') {
+                    toastMsg('SIGN-IN SUCCESS', response.Ticket, 'success', 'small');
+                } else if (response.Result == 'BLOCKED') {
+                    toastMsg('SIGN-IN FAILED', response.Msg, 'warning', 'small');
+                } else if (response.Result == 'ERROR') {
+                    toastMsg('SERVER ERROR', response.ErrMsg, 'error', 'large');
                 }
-            } else {
-                toastMsg('SERVER ERROR', 'INVALID JSON RETURNED', 'error', 'small');
-            }
+            //} else {
+            //    toastMsg('SERVER ERROR', 'INVALID JSON RETURNED', 'error', 'small');
+            //}
         } else {
             toastMsg('SERVER ERROR', 'NULL JSON RETURNED', 'error', 'small');
         }

@@ -11,9 +11,9 @@ using System.Data.SqlClient;
 using WebApiProject.Models;
 using WebApiProject.Models.Tables;
 using WebApiProject.Models.Views;
-using WebApiProject.Models.RequestParams;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WebApiProject.Controllers
 {
@@ -26,63 +26,65 @@ namespace WebApiProject.Controllers
         // PUT QUERIES USING STORED PROCEDURES
         //*********************************************
 
-        // [URI: api/new-purchase], [VIEW: new-purchase.html]
-        [Route("api/new-purchase")]
+        /*
+        [API URI: /new-purchase]
+        [VIEW: /views/new-purchase.html]
+        */
+        [Route("new-purchase")]
         [HttpPut]
-        public object[] NewPurchase(
-            string data)
+        public JObject NewPurchase(JObject jsonData)
         {
             //System.Threading.Thread.Sleep(2000);
+            
+            // dynamic input from inbound JSON
+            dynamic newPurchase = jsonData;
+            int acct_id = newPurchase.acct_id;
+            int good_id = newPurchase.good_id;
 
-            var newPurchase = JsonConvert.DeserializeObject<IEnumerable<newPurchase>>(data);
+            /** create the json object that will hold the output data **/
+            dynamic jsonOutput = new JObject();
 
-            /** create objects that hold the output data **/
-            List<object> resultsList = new List<object>();
-            Dictionary<string, object> dict = new Dictionary<string, object>();
+            try
+            {
+                //** query the database
+                AdoNet.SqlConnect();
 
-            //try
-            //{
-            //    //** query the database
-            //    AdoNet.SqlConnect();
+                //** specify the stored procedure
+                AdoNet.SqlNewCommand("dbo.newPurchase", "sp");
+                //** INs
+                AdoNet.SqlNewParam("Input", "@AccountID", acct_id, SqlDbType.Int, 0);
+                AdoNet.SqlNewParam("Input", "@GoodID", good_id, SqlDbType.Int, 0);
+                //** OUTs
+                AdoNet.SqlNewParam("Output", "@NewID", null, SqlDbType.Int, 0);
+                //** Execute SP
+                AdoNet.SqlExecuteCommand();
+                //** Obtain output param's value
 
-            //    //** specify the stored procedure
-            //    AdoNet.SqlNewCommand("dbo.newPurchase", "sp");
-            //    //** INs
-            //    AdoNet.SqlNewParam("Input", "@AccountID", acct_id, SqlDbType.Int, 0);
-            //    AdoNet.SqlNewParam("Input", "@GoodID", good_id, SqlDbType.Int, 0);
-            //    //** OUTs
-            //    AdoNet.SqlNewParam("Output", "@NewID", null, SqlDbType.Int, 0);
-            //    //** Execute SP
-            //    AdoNet.SqlExecuteCommand();
-            //    //** Obtain output param's value
+                int newId = 0;
+                if (Helpers.TryConvertTo<int>(AdoNet.SqlOutputParamValue("@NewID").ToString()))
+                {
+                    newId = Convert.ToInt32(AdoNet.SqlOutputParamValue("@NewID").ToString());
+                }
 
-            //    int newId = 0;
-            //    if (Helpers.TryConvertTo<int>(AdoNet.SqlOutputParamValue("@NewID").ToString()))
-            //    {
-            //        newId = Convert.ToInt32(AdoNet.SqlOutputParamValue("@NewID").ToString());
-            //    }
+                jsonOutput.Result = "OK";
+                jsonOutput.NewID = newId;
+            }
+            catch (SqlException x)
+            {
+                jsonOutput.Result = "ERROR";
+                jsonOutput.ErrMsg = "SQL: " + x.ToString();
+            }
+            catch (Exception x)
+            {
+                jsonOutput.Result = "ERROR";
+                jsonOutput.ErrMsg = "APP: " + x.ToString();
+            }
+            finally
+            {
+                AdoNet.SqlDisconnect();
+            }
 
-            //    dict.Add("Result", "OK");
-            //    dict.Add("NewID", newId);
-            //}
-            //catch (SqlException x)
-            //{
-            //    dict.Add("Result", "ERROR");
-            //    dict.Add("ErrMsg", "SQL: " + x.ToString());
-            //}
-            //catch (Exception x)
-            //{
-            //    dict.Add("Result", "ERROR");
-            //    dict.Add("ErrMsg", "APP: " + x.ToString());
-            //}
-            //finally
-            //{
-            //    AdoNet.SqlDisconnect();
-            //}
-
-            resultsList.Add(dict);
-            return resultsList.ToArray();
-
+            return jsonOutput;
         }
 
 
@@ -90,17 +92,18 @@ namespace WebApiProject.Controllers
         // POST QUERIES USING STORED PROCEDURES
         //*********************************************
 
-            // [URI: api/purchases], [VIEW: purchases.html]
-        [Route("api/sign-in")]
+        /*
+        [API URI: /sign-in]
+        [VIEW: /views/sign-in.html]
+        */
+        [Route("sign-in")]
         [HttpPost]
-        public object[] SignIn(
+        public JObject SignIn(
             string username,
             string password)
         {
             //System.Threading.Thread.Sleep(2000);
-
-            List<object> resultsList = new List<object>();
-            Dictionary<string, object> dict = new Dictionary<string, object>();
+            dynamic jsonObject = new JObject();
 
             //** make modifications on posted data (ready user input for db)
             password += ConfigurationManager.AppSettings["mySalt"];
@@ -140,49 +143,53 @@ namespace WebApiProject.Controllers
                         AdoNet.SqlExecuteCommand();
                         //** Obtain output param's value
                         string ticket = AdoNet.SqlOutputParamValue("@Ticket").ToString();
-                        // Populate the Dictionary
-                        dict.Add("Result", "OK");
-                        dict.Add("Ticket", ticket);
+                        // Populate the JSON Object
+                        jsonObject.Result = "OK";
+                        jsonObject.Ticket = ticket;
                     } else {
-                        dict.Add("Result", "BLOCKED");
-                        dict.Add("Msg", "Wrong Password!");
+                        jsonObject.Result = "BLOCKED";
+                        jsonObject.Msg = "Wrong Password!";
                     }
                 } else {
-                    dict.Add("Result", "BLOCKED");
-                    dict.Add("Msg", "No Such User!");
+                    jsonObject.Result = "BLOCKED";
+                    jsonObject.Msg = "No Such User!";
                 }
             }
             catch (SqlException x)
             {
-                dict.Add("Result", "ERROR");
-                dict.Add("ErrMsg", "SQL: " + x.ToString());
+                jsonObject.Result = "ERROR";
+                jsonObject.ErrMsg = "SQL: " + x.ToString();
             }
             catch (Exception x)
             {
-                dict.Add("Result", "ERROR");
-                dict.Add("ErrMsg", "APP: " + x.ToString());
+                jsonObject.Result = "ERROR";
+                jsonObject.ErrMsg = "APP: " + x.ToString();
             }
             finally
             {
                 AdoNet.SqlDisconnect();
             }
 
-            resultsList.Add(dict);
-            return resultsList.ToArray();
+            return jsonObject;
         }
 
 
-        // [URI: api/purchases], [VIEW: purchases.html]
-        [Route("api/purchases")]
+        /*
+        [API URI: /purchases]
+        [VIEW: /views/purchases.html]
+        */
+        [Route("purchases")]
         [HttpPost]
-        public object[] GetPurchases(
+        //public object[] GetPurchases(
+        public JObject GetPurchases(
             int? good_id,
             byte? gender_ix)
         {
             //System.Threading.Thread.Sleep(2000);
 
-            List<object> resultsList = new List<object>();
-            Dictionary<string, object> dict = new Dictionary<string, object>();
+            dynamic jsonObject = new JObject();
+            //List<object> resultsList = new List<object>();
+            //Dictionary<string, object> dict = new Dictionary<string, object>();
 
             try {
                 //*** query the database
@@ -269,31 +276,43 @@ namespace WebApiProject.Controllers
                 }
 
                 // Populate the Dictionary
-                dict.Add("Result", "OK");
-                dict.Add("Data", dataList);
+                jsonObject.Result = "OK";
+                jsonObject.Data = JsonConvert.SerializeObject(dataList);
+                jsonObject.Count = listCount;
+
+                //dict.Add("Result", "OK");
+                //dict.Add("Data", dataList);
                 //dict.Add("Array", dataArray);
                 //dict.Add("ArrayCount", arrayCount);
-                dict.Add("Count", listCount);
+                //dict.Add("Count", listCount);
             }
             catch (SqlException x) {
-                dict.Add("Result", "ERROR");
-                dict.Add("ErrMsg", "SQL: " + x.ToString());
+                //dict.Add("Result", "ERROR");
+                //dict.Add("ErrMsg", "SQL: " + x.ToString());
+                jsonObject.Result = "ERROR";
+                jsonObject.ErrMsg = "SQL: " + x.ToString();
             }
             catch (Exception x) {
-                dict.Add("Result", "ERROR");
-                dict.Add("ErrMsg", "APP: " + x.ToString());
+                //dict.Add("Result", "ERROR");
+                //dict.Add("ErrMsg", "APP: " + x.ToString());
+                jsonObject.Result = "ERROR";
+                jsonObject.ErrMsg = "APP: " + x.ToString();
             }
             finally {
                 AdoNet.SqlDisconnect();
             }
 
-            resultsList.Add(dict);
-            return resultsList.ToArray();
+            //resultsList.Add(dict);
+            //return resultsList.ToArray();
+            return jsonObject;
         }
 
 
-        /** [URI: api/new-shopper?action=insert], [VIEW: new-shopper.html] **/
-        [Route("api/new-shopper")]
+        /*
+        [API URI: /new-shopper?action=insert]
+        [VIEW: /views/new-shopper.html]
+        */
+        [Route("new-shopper")]
         [HttpPost]
         public object[] NewShopper(
             string email,
@@ -377,6 +396,7 @@ namespace WebApiProject.Controllers
                         "dbo.newShopper @AccountID, @Name, @GenderIX, @OptIn", params_sp2);
 
                 dict.Add("Result", "OK");
+                dict.Add("Action", action);
             }
             catch (SqlException x)
             {
@@ -393,7 +413,6 @@ namespace WebApiProject.Controllers
             list.Add(dict);
 
             return list.ToArray();
-
         }
 
 
@@ -401,14 +420,17 @@ namespace WebApiProject.Controllers
         /* GET QUERIES USING STORED PROCEDURES */
         /*********************************************/
 
-        /** [URI: api/shoppers?gender_ix=1&opt_in=1&_=1111], [VIEW: shoppers.html] **/
-        [Route("api/shoppers")]
+        /*
+        [API URI: /shoppers?gender_ix=1&opt_in=1&_=1111]
+        [VIEW: /views/shoppers.html]
+        */
+        [Route("shoppers")]
         [HttpGet]
         public IEnumerable<getShoppers> GetShoppersFromView(
             byte? gender_ix, 
             byte? opt_in)
         {    
-            //try /** DO NOT USE TRY-CATCH HERE SINCE FUNCTION RETURNS AN ENTITY MODEL **/
+            //try /** DO NOT USE TRY-CATCH HERE SINCE FUNCTION RETURNS THE ENTITY MODEL **/
             //{
             SqlParameter[] sp = {
                 new SqlParameter() {
@@ -444,20 +466,22 @@ namespace WebApiProject.Controllers
             //    IEnumerable<getShoppers> sequenceOfFoos = new getShoppers[] { new getShoppers() { ID = 0 }, new getShoppers() { Email = e.Message } };
             //    return sequenceOfFoos;
             //}
-            
         }
 
-        // [URI: api/shopper/1], [VIEW: shopper.html]
-        [Route("api/shopper/{acct_id}")]
+
+        /*
+        [API URI: /shopper/1]
+        [VIEW: /views/shopper.html]
+        */
         [HttpGet]
         public IEnumerable<getShoppers> GetShopperFromView(
-            int acct_id)
+            int id)
         {
             SqlParameter[] sp = {
                 new SqlParameter() {
                     ParameterName = "AccountID",
                     SqlDbType = SqlDbType.Int,
-                    Value = acct_id,
+                    Value = id,
                     Direction = ParameterDirection.Input
                 }
             };
@@ -480,22 +504,27 @@ namespace WebApiProject.Controllers
         // GET QUERIES ON TABLES
         //*********************************************
 
-        // [URI: api/genders], [VIEW: genders.html]
-        [Route("api/genders")]
+        /*
+        [API URI: /genders]
+        [VIEW: /views/genders.html]
+        */
         [HttpGet]
         public IQueryable<Genders> GetGendersFromTable()
         {
             return db.Genders;
         }
 
-        // [URI: api/gender/1], [VIEW: gender.html]
-        [Route("api/gender/{ix}")]
+
+        /*
+        [API URI: /gender/{id}]
+        [VIEW: /views/gender.html]
+        */
         [HttpGet]
         [ResponseType(typeof(Genders))]
         public IHttpActionResult GetGenderFromTable(
-            byte ix)
+            byte id)
         {
-            Genders genders = db.Genders.Find(ix);
+            Genders genders = db.Genders.Find(id);
             //if (genders == null)
             //{
             //    return  NotFound(); //returns a 404 error

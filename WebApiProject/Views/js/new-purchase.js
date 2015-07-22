@@ -53,11 +53,11 @@ function postData(jsonObj) {
     .done(function (response) {
         //console.log(response);
         if (response) {
-            if (response[0].Result) {
-                if (response[0].Result == 'OK') {
-                    toastMsg('SUCCESS', 'New Purchase ID : ' + response[0].NewID, 'success', 'small');
-                } else if (response[0].Result == 'ERROR') {
-                    toastMsg('SERVER ERROR', response[0].ErrMsg, 'error', 'large');
+            if (response.Result) {
+                if (response.Result == 'OK') {
+                    toastMsg('SUCCESS', 'New Purchase ID : ' + response.NewID, 'success', 'small');
+                } else if (response.Result == 'ERROR') {
+                    toastMsg('SERVER ERROR', response.ErrMsg, 'error', 'large');
                 }
             } else {
                 toastMsg('MESSAGE', 'INVALID JSON RETURNED', 'error', 'small');

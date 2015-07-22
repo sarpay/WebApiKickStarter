@@ -84,7 +84,7 @@ public class PostParameterBinding : HttpParameterBinding
         var supportedMethods = descriptor.ActionDescriptor.SupportedHttpMethods;
 
         // Only apply this binder on POST and PUT operations
-        if (supportedMethods.Contains(HttpMethod.Post))
+        if (supportedMethods.Contains(HttpMethod.Post) || supportedMethods.Contains(HttpMethod.Put))
         {
             var supportedTypes = new Type[] { typeof(string),
                                                 typeof(int),

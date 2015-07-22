@@ -45,7 +45,7 @@ function postData(jsonObj) {
     $.toast().reset('all');
     $('.spinner').show();
     
-    var xhrPromise = jqXHR('POST', 'new-shopper', 'application/json; charset=utf-8', jsonObj);
+    var xhrPromise = jqXHR('POST', 'new-shopper?action=insert', 'application/json; charset=utf-8', jsonObj);
     xhrPromise /* promise callbacks are executed in order */
     .always(function (response) {
         $('.spinner').hide();

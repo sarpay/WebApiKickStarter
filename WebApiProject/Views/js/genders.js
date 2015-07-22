@@ -21,7 +21,7 @@ function gridInit() {
                 $.toast().reset('all');
                 $('.spinner').show();
 
-                var xhrPromise = jqXHR('GET', 'genders', 'application/json; charset=utf-8', null);
+                var xhrPromise = jqXHR('GET', 'GetGendersFromTable', 'application/json; charset=utf-8', null);
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function () {
                     $('.spinner').hide();

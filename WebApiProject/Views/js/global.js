@@ -33,7 +33,7 @@ Expects an optional data as JSON object or a FORM. (not string)
 */
 function jqXHR(requestMethod, targetRoute, contentType, data) {
 
-    var apiRoot = '../api/';
+    var apiRoot = '../';
     var url = apiRoot + targetRoute;
 
     switch (requestMethod) {
@@ -48,7 +48,8 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
             data = JSON.stringify(data);
             break;
         case 'PUT':
-            data = '{"data":"' + JSON.stringify(data) + '"}';
+            //data = '{"data":' + JSON.stringify(data) + '}';
+            data = JSON.stringify(data);
             break;
     }
 

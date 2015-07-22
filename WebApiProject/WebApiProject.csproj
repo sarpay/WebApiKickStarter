@@ -163,7 +163,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
-    <Compile Include="Models\RequestParams\newPurchase.cs" />
     <Compile Include="Models\Tables\Accounts.cs" />
     <Compile Include="Models\DataModel.cs" />
     <Compile Include="Models\Tables\Genders.cs" />

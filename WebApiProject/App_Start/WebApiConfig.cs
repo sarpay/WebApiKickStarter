@@ -13,9 +13,9 @@ namespace WebApiProject
             config.MapHttpAttributeRoutes(); /*Enables attribute routing. Routing is how Web API matches a URI to an action.*/
 
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                name: "DefaultRoute",
+                routeTemplate: "{action}/{id}",/*{controller}*/
+                defaults: new { controller = "Home", id = RouteParameter.Optional }
             );
 
             //*** this line of code makes sure that server responds as json instead of xml using Chrome

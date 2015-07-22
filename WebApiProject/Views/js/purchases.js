@@ -36,10 +36,10 @@ function gridInit(jsonObj) {
                 //    /* promise resolved */
                 //    function (response) {
                 //        //console.log(response);
-                //        if (response[0].Result == 'OK') {
-                //            grid.success(response[0].Data); //*** bind data to grid
-                //        } else if (response[0].Result == 'ERROR') {
-                //            toastMsg('SERVER ERROR', response[0].ErrMsg, 'error', 'large');
+                //        if (response.Result == 'OK') {
+                //            grid.success(response.Data); //*** bind data to grid
+                //        } else if (response.Result == 'ERROR') {
+                //            toastMsg('SERVER ERROR', response.ErrMsg, 'error', 'large');
                 //            grid.success([]); //** stops the loading indicator regardless success/fail
                 //        }
                 //    },
@@ -64,11 +64,11 @@ function gridInit(jsonObj) {
                 .done(function (response) {
                     //console.log(response);
                     if (response) {
-                        if (response[0].Result) {
-                            if (response[0].Result == 'OK') {
-                                grid.success(response[0].Data); // bind data to grid
-                            } else if (response[0].Result == 'ERROR') {
-                                toastMsg('SERVER ERROR', response[0].ErrMsg, 'error', 'large');
+                        if (response.Result) {
+                            if (response.Result == 'OK') {
+                                grid.success(JSON.parse(response.Data)); // bind data to grid
+                            } else if (response.Result == 'ERROR') {
+                                toastMsg('SERVER ERROR', response.ErrMsg, 'error', 'large');
                             }
                         } else {
                             toastMsg('SERVER ERROR', 'INVALID JSON RETURNED', 'error', 'small');
