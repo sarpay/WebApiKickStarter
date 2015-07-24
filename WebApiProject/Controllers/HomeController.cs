@@ -31,6 +31,7 @@ namespace WebApiProject.Controllers
         [VIEW: /views/new-purchase.html]
         DOES NOT REQUIRE PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
         BECAUSE [HttpPut] IS NOT COVERED BY THIS CONFIGURATION (commented out line : 87)
+        INSTEAD IT ACCEPTS A SINGLE JSON OBJECT THAT HOLDS MULTIPLE PARAMS
         */
         [Route("new-purchase")]
         [HttpPut]
@@ -100,6 +101,7 @@ namespace WebApiProject.Controllers
         [VIEW: /views/sign-in.html]
         REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
         HttpPost is manipulated by this configuration
+        AND RETURNS A JObject (using Newtonsoft.Json)
         */
         [Route("sign-in")]
         [HttpPost]
@@ -182,10 +184,11 @@ namespace WebApiProject.Controllers
         /*
         [API URI: /purchases]
         [VIEW: /views/purchases.html]
+        REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
+        RETURNS A JObject (using Newtonsoft.Json)
         */
         [Route("purchases")]
         [HttpPost]
-        //public object[] GetPurchases(
         public JObject GetPurchases(
             int? good_id,
             byte? gender_ix)
@@ -193,8 +196,6 @@ namespace WebApiProject.Controllers
             //System.Threading.Thread.Sleep(2000);
 
             dynamic jsonObject = new JObject();
-            //List<object> resultsList = new List<object>();
-            //Dictionary<string, object> dict = new Dictionary<string, object>();
 
             try {
                 //*** query the database
@@ -284,22 +285,12 @@ namespace WebApiProject.Controllers
                 jsonObject.Result = "OK";
                 jsonObject.Data = JsonConvert.SerializeObject(dataList);
                 jsonObject.Count = listCount;
-
-                //dict.Add("Result", "OK");
-                //dict.Add("Data", dataList);
-                //dict.Add("Array", dataArray);
-                //dict.Add("ArrayCount", arrayCount);
-                //dict.Add("Count", listCount);
             }
             catch (SqlException x) {
-                //dict.Add("Result", "ERROR");
-                //dict.Add("ErrMsg", "SQL: " + x.ToString());
                 jsonObject.Result = "ERROR";
                 jsonObject.ErrMsg = "SQL: " + x.ToString();
             }
             catch (Exception x) {
-                //dict.Add("Result", "ERROR");
-                //dict.Add("ErrMsg", "APP: " + x.ToString());
                 jsonObject.Result = "ERROR";
                 jsonObject.ErrMsg = "APP: " + x.ToString();
             }
@@ -307,8 +298,6 @@ namespace WebApiProject.Controllers
                 AdoNet.SqlDisconnect();
             }
 
-            //resultsList.Add(dict);
-            //return resultsList.ToArray();
             return jsonObject;
         }
 
@@ -316,6 +305,8 @@ namespace WebApiProject.Controllers
         /*
         [API URI: /new-shopper?action=insert]
         [VIEW: /views/new-shopper.html]
+        REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
+        AND RETURNS A CUSTOM LIST ARRAY OBJECT AS JSON
         */
         [Route("new-shopper")]
         [HttpPost]
@@ -475,7 +466,7 @@ namespace WebApiProject.Controllers
 
 
         /*
-        [API URI: /shopper/1]
+        [API URI: /GetShopperFromView/1]
         [VIEW: /views/shopper.html]
         */
         [HttpGet]
@@ -510,7 +501,7 @@ namespace WebApiProject.Controllers
         //*********************************************
 
         /*
-        [API URI: /genders]
+        [API URI: /GetGendersFromTable]
         [VIEW: /views/genders.html]
         */
         [HttpGet]
@@ -521,7 +512,7 @@ namespace WebApiProject.Controllers
 
 
         /*
-        [API URI: /gender/{id}]
+        [API URI: /GetGenderFromTable/{id}]
         [VIEW: /views/gender.html]
         */
         [HttpGet]

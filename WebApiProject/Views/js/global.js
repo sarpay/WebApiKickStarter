@@ -48,7 +48,6 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
             data = JSON.stringify(data);
             break;
         case 'PUT':
-            //data = '{"data":' + JSON.stringify(data) + '}';
             data = JSON.stringify(data);
             break;
     }
