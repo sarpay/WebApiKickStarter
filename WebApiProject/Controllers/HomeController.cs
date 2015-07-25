@@ -91,16 +91,16 @@ namespace WebApiProject.Controllers
                 /** Iterate thru rows of the List object.. **/
                 foreach (Dictionary<string, string> row in dataList)
                 {
-
-                    List<string> keysOfMoney = new List<string>();
-                    List<string> keysOfEmail = new List<string>();
-                    List<string> keysOfDateTime = new List<string>();
-
                     /**
                     Iterate thru all columns of the row in question 
                     and mark each column that needs modification 
                     row[key] : key is the column name in question : (x,y) coords of the table cell
                     **/
+
+                    List<string> keysOfMoney = new List<string>();
+                    List<string> keysOfEmail = new List<string>();
+                    List<string> keysOfDateTime = new List<string>();
+
                     foreach (string key in row.Keys)
                     {
                         if (Helpers.TryConvertTo<decimal>(row[key]) && row[key].Contains("."))
@@ -357,7 +357,7 @@ namespace WebApiProject.Controllers
         **/
         [Route("new-shopper")]
         [HttpPost]
-        public object[] NewShopper(
+        public object NewShopper(
             string email,
             string pwd,
             string name,

@@ -31,7 +31,7 @@ function gridInit(jsonObj) {
                 $('.spinner').show();
 
                 /*** REQUIRES ES6 HARMONY PROMISES ***/
-                //XHR('POST', 'purchases', 'application/json; charset=utf-8', jsonObj)
+                //XHR('PUT', 'purchases', 'application/json; charset=utf-8', jsonObj)
                 //.then(
                 //    /* promise resolved */
                 //    function (response) {
