@@ -55,18 +55,18 @@ function gridInit(jsonObj) {
                 //    }
                 //);
 
-                var xhrPromise = jqXHR('POST', 'purchases', 'application/json; charset=utf-8', jsonObj);
+                var xhrPromise = jqXHR('PUT', 'purchases', 'application/json; charset=utf-8', jsonObj);
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function (response) {
                     $('.spinner').hide();
                     grid.success([]); //** stops the loading indicator regardless success/fail
                 })
                 .done(function (response) {
-                    //console.log(response);
+                    $('#raw-json').val(JSON.stringify(response, null, 4));
                     if (response) {
                         if (response.Result) {
                             if (response.Result == 'OK') {
-                                grid.success(JSON.parse(response.Data)); // bind data to grid
+                                grid.success(response.Data); // bind data to grid
                             } else if (response.Result == 'ERROR') {
                                 toastMsg('SERVER ERROR', response.ErrMsg, 'error', 'large');
                             }

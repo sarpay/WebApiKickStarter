@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -57,7 +58,13 @@ namespace WebApiProject
 
         public static object ConvertToDbNullWhenNull(object obj)
         {
-            return (obj == null ? DBNull.Value : obj);
+            return (obj == null) ? DBNull.Value : obj;
+        }
+
+
+        public static object ConvertToNullWhenEmpty(string val)
+        {
+            return (val == String.Empty) ? null : val;
         }
 
 
@@ -75,5 +82,21 @@ namespace WebApiProject
             return true;
         }
 
+
+        public static object ConvertTo<T>(object input)
+        {
+            Object result = null;
+            try
+            {
+                result = Convert.ChangeType(input, typeof(T));
+            }
+            catch
+            {
+                return null;
+            }
+            return result;
+        }
+
     }
+
 }
