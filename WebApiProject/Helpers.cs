@@ -106,11 +106,16 @@ namespace WebApiProject
         }
 
 
-        public static bool TryConvertStringToInt(string input)
+        public static bool TryParseStringToInt(string input)
         {
             int output;
-            bool parsed = int.TryParse(input, out output);
-            return parsed;
+            return int.TryParse(input, out output);
+        }
+
+        public static bool TryParseStringToGuid(string input)
+        {
+            Guid output;
+            return Guid.TryParse(input, out output);
         }
 
     }

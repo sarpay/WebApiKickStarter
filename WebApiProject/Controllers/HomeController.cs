@@ -17,7 +17,7 @@ using System.Web.Http.Cors;
 
 namespace WebApiProject.Controllers
 {
-    //[ForceHttps()]
+    [ForceHttps()]
     //[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE")]
     //[RoutePrefix("api/home")]
 

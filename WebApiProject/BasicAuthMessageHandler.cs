@@ -79,13 +79,12 @@ namespace WebApiProject
                 //credentials = Encoding.ASCII.GetString(Convert.FromBase64String(authParams)).Split(new[] { ':' });
 
                 if (credentials.Length == 2
-                        && Helpers.TryConvertStringToInt(credentials[0])
+                        && Helpers.TryParseStringToInt(credentials[0])
                         && !String.IsNullOrWhiteSpace(credentials[1]))
                 {
                     int userId = int.Parse(credentials[0]);
                     string ticket = credentials[1];
-                    Guid guidOutput;
-                    if (!Guid.TryParse(ticket, out guidOutput))
+                    if (!Helpers.TryParseStringToGuid(ticket))
                     {
                         return null;
                     }
