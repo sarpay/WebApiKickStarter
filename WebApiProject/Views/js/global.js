@@ -70,6 +70,11 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
         async: true,
         beforeSend: function (xhrObj) {
             //console.log(xhrObj);
+            xhrObj.setRequestHeader(
+                'Authorization',
+                'Basic ' + btoa(getStorageItem('UserId', 'session') + ':' + getStorageItem('Ticket', 'session'))
+            );
+            return true;
         }
         //contentType: 'application/x-www-form-urlencoded; charset=UTF-8' //default
         //contentType: 'application/atom+xml' //Atom
@@ -89,21 +94,40 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
         //console.log(error);
         var responseJSON = error.responseJSON;
         var msgText = error.status + ' : ' + error.statusText;
-        if (error.status === 0) {
+
+        if (error.status === 0) { /** happens when beforeSend returns false **/
             msgText += '<br/><br/>Your request has timed out or network connection was lost.';
             toastMsg('XHR ERROR', msgText, 'error', 'small');
-        }
-        else if (error.status === 500 && responseJSON.StackTrace) {
+
+        } else if (error.status === 500 && responseJSON.StackTrace) { /* Internal Server Error */
             msgText += '<br/><br/><b>Exception Type: </b>' + responseJSON.ExceptionType;
             msgText += '<br/><br/><b>Exception Message: </b>' + responseJSON.ExceptionMessage;
             msgText += '<br/><br/><b>Stack Trace: </b>' + responseJSON.StackTrace;
             toastMsg('XHR ERROR', msgText, 'error', 'large');
-        }
-        else {
+
+        } else if (error.status === 401) { /* Unauthorized */
+            //window.location.href = 'sign-up.html';
+            msgText += '<br/><br/><b>Message: </b>' + responseJSON.Message;
+            msgText += '<br/><br/><b>Message Detail: </b>' + responseJSON.MessageDetail;
+            toastMsg('AUTH ERROR', msgText, 'error', 'small');
+            
+        } else if (error.status === 403) { /* Forbidden */
+            //window.location.href = 'sign-in.html';
+            msgText += '<br/><br/><b>Message: </b>' + responseJSON.Message;
+            msgText += '<br/><br/><b>Message Detail: </b>' + responseJSON.MessageDetail;
+            toastMsg('AUTH ERROR', msgText, 'error', 'small');
+
+        } else if (error.status === 404) { /* Not Found */
+            window.location.href = 'not-found.html';
+
+        } else {
             msgText += '<br/><br/><b>Message: </b>' + responseJSON.Message;
             msgText += '<br/><br/><b>Message Detail: </b>' + responseJSON.MessageDetail;
             toastMsg('XHR ERROR', msgText, 'error', 'small');
         }
+    })
+    .always(function () { /** should always be at the end **/
+    
     });
 
 }
@@ -295,6 +319,8 @@ function setStylesheet(styleName) {
 }
 
 
+var storageKeyPrefix = 'WebApiKickStarter_';
+
 function setStorageItem(key, value, type) {
 
     if (typeof (Storage) !== 'undefined') {
@@ -350,7 +376,7 @@ function removeStorageItem(key, type) {
 function clearStorageItems() {
 
     //removeStorageItem('username', 'local');
-    removeStorageItem('ticket', 'session');
+    removeStorageItem('Ticket', 'session');
 
 }
 

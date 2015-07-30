@@ -13,9 +13,14 @@ using WebApiProject.Models.Views;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Web.Http.Cors;
 
 namespace WebApiProject.Controllers
 {
+    //[ForceHttps()]
+    //[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE")]
+    //[RoutePrefix("api/home")]
+
     public class HomeController : ApiController
     {
         private DataModel db = new DataModel();
@@ -35,9 +40,10 @@ namespace WebApiProject.Controllers
 
         RETURNS A JObject (using Newtonsoft.Json.Linq)
         **/
+        [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
+        //[Private()]
         [Route("purchases")]
         [HttpPut]
-        //[HttpPost]
         //public object GetPurchases(JObject jsonObj)
         public JObject GetPurchases(JObject jsonObj)
         {
@@ -320,6 +326,8 @@ namespace WebApiProject.Controllers
                         string ticket = AdoNet.SqlOutputParamValue("@Ticket").ToString();
                         /** Populate the JSON Object **/
                         jsonOutput.Result = "OK";
+                        jsonOutput.UserName = username;
+                        jsonOutput.UserId = userId;
                         jsonOutput.Ticket = ticket;
                     } else {
                         jsonOutput.Result = "BLOCKED";

@@ -57,9 +57,9 @@ function gridInit(jsonObj) {
 
                 var xhrPromise = jqXHR('PUT', 'purchases', 'application/json; charset=utf-8', jsonObj);
                 xhrPromise /* promise callbacks are executed in order */
-                .always(function (response) {
+                .always(function (response) { /** should always be at the end **/
                     $('.spinner').hide();
-                    grid.success([]); //** stops the loading indicator regardless success/fail
+                    grid.success([]); /** stops the loading indicator regardless success/fail **/
                 })
                 .done(function (response) {
                     $('#raw-json').val(JSON.stringify(response, null, 4));
@@ -76,11 +76,11 @@ function gridInit(jsonObj) {
                     } else {
                         toastMsg('SERVER ERROR', 'NULL JSON RETURNED', 'error', 'small');
                     }
+                })
+                .fail(function (response) { /** make further ui changes on xhr fail **/
+                    $('.spinner').hide();
+                    grid.success([]); /** stops the loading indicator regardless success/fail **/
                 });
-                //.fail(function (response) {
-                //    console.log(response);
-                //    /* make further ui changes on xhr fail */
-                //});
                 
             } //*** read ends
 

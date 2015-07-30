@@ -51,7 +51,15 @@ namespace WebApiProject
 
         public static bool ConvertToBoolean(object value)
         {
-            bool functionReturnValue = ((string)value == "1" | (short)value == 1);
+            bool functionReturnValue = false;
+            try
+            {
+                functionReturnValue = ((string)value == "1" | (short)value == 1);
+            }
+            catch
+            {
+                functionReturnValue = false;
+            }
             return functionReturnValue;
         }
 
@@ -95,6 +103,14 @@ namespace WebApiProject
                 return null;
             }
             return result;
+        }
+
+
+        public static bool TryConvertStringToInt(string input)
+        {
+            int output;
+            bool parsed = int.TryParse(input, out output);
+            return parsed;
         }
 
     }

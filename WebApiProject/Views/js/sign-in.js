@@ -29,6 +29,9 @@ function signIn(jsonObj) {
         if (response) {
             //if (response[0].Result) {
                 if (response.Result == 'OK') {
+                    setStorageItem('UserName', response.UserName, 'local');
+                    setStorageItem('UserId', response.UserId, 'session');
+                    setStorageItem('Ticket', response.Ticket, 'session');
                     toastMsg('SIGN-IN SUCCESS', response.Ticket, 'success', 'small');
                 } else if (response.Result == 'BLOCKED') {
                     toastMsg('SIGN-IN FAILED', response.Msg, 'warning', 'small');

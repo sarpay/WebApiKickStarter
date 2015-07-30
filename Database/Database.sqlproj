@@ -82,6 +82,7 @@
     <Build Include="dbo\Tables\UserTickets.sql" />
     <Build Include="dbo\Stored Procedures\getPassword.sql" />
     <Build Include="dbo\Stored Procedures\newTicket.sql" />
+    <Build Include="dbo\Stored Procedures\authUser.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\110\SqlSchemas\master.dacpac">
