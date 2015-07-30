@@ -17,7 +17,7 @@ using System.Web.Http.Cors;
 
 namespace WebApiProject.Controllers
 {
-    [ForceHttps()]
+    //[ForceHttps()]
     //[EnableCors(origins: "*", headers: "*", methods: "GET,POST,PUT,DELETE")]
     //[RoutePrefix("api/home")]
 
@@ -41,7 +41,6 @@ namespace WebApiProject.Controllers
         RETURNS A JObject (using Newtonsoft.Json.Linq)
         **/
         [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
-        //[Private()]
         [Route("purchases")]
         [HttpPut]
         //public object GetPurchases(JObject jsonObj)
@@ -277,6 +276,7 @@ namespace WebApiProject.Controllers
         HttpPost is manipulated by this configuration
         RETURNS A JObject (using Newtonsoft.Json.Linq)
         **/
+        //[ForceHttps()]
         [Route("sign-in")]
         [HttpPost]
         public JObject SignIn(
