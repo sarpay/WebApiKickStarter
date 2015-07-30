@@ -30,7 +30,7 @@ function gridInit(gender_ix) {
                 $.toast().reset('all');
                 $('.spinner').show();
 
-                var xhrPromise = jqXHR('GET', 'GetGenderFromTable', 'application/json; charset=utf-8', gender_ix);
+                var xhrPromise = jqXHR('GET-URI', 'GetGenderFromTable', 'application/json; charset=utf-8', gender_ix);
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function () {
                     $('.spinner').hide();

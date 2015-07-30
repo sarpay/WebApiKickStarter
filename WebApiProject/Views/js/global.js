@@ -37,7 +37,8 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
     var url = apiRoot + targetRoute;
 
     switch (requestMethod) {
-        case 'GET':
+        case 'GET-URI':
+            requestMethod = 'GET';
             url += (data ? '/' + data : '');
             if (!data) { data = ''; }
             break;

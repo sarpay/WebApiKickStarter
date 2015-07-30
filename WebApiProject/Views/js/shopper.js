@@ -30,7 +30,7 @@ function gridInit(acct_id) {
                 $.toast().reset('all');
                 $('.spinner').show();
 
-                var xhrPromise = jqXHR('GET', 'GetShopperFromView', 'application/json; charset=utf-8', acct_id);
+                var xhrPromise = jqXHR('GET-URI', 'GetShopperFromView', 'application/json; charset=utf-8', acct_id);
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function () {
                     $('.spinner').hide();
