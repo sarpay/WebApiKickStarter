@@ -93,16 +93,14 @@ namespace WebApiProject
             Message handlers are called in the same order that they appear in MessageHandlers collection.
             Because they are nested, the response message travels in the other direction.
             That is, the last handler is the first to get the response message.
-            -- Set up basic authentication --
             **/
-
-            //config.MessageHandlers.Add(new ApiKeyHandler()); /* Global handler - applicable to all the requests */
 
             config.MessageHandlers.Add(new BasicAuthMessageHandler() /** works in conjuction w/ [Authorize] **/
             {
                 PrincipalProvider = new PrincipalProvider()
             });
 
+            config.MessageHandlers.Add(new ApiKeyHandler()); /* Global handler - applicable to all the requests */
 
             /** this line of code makes sure that server responds as json instead of xml using Chrome **/
             /** it can be safely removed **/

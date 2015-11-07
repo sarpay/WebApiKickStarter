@@ -43,7 +43,7 @@ namespace WebApiProject
                 }
                 else
                 {
-                    actionContext.Response = request.CreateResponse(HttpStatusCode.NotFound);
+                    actionContext.Response = request.CreateResponse(HttpStatusCode.HttpVersionNotSupported);
                     actionContext.Response.Content = new StringContent(jsonOutput.ToString(), Encoding.UTF8, "text/html");
                 }
 

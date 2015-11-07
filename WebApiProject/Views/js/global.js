@@ -1,4 +1,7 @@
-﻿function makeAjaxCall(type, uri, data) {
+﻿var apiKey = 'AV3xqDcx3txaGAkN';
+
+
+function makeAjaxCall(type, uri, data) {
 
     var routeRoot = '../api/';
 
@@ -53,6 +56,12 @@ function jqXHR(requestMethod, targetRoute, contentType, data) {
             break;
     }
 
+    /* add the API KEY to all requests 
+        - works in conjunction with ApiKeyHandler.cs 
+    */
+    url += '/?key=' + apiKey;
+
+    /* Make the Ajax call */
     return $.ajax({
         type: requestMethod,
         headers: {

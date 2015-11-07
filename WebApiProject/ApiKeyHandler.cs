@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -15,8 +16,9 @@ namespace WebApiProject
     public class ApiKeyHandler : DelegatingHandler
     {
         /**
+        This handler is enforced in WebApiConfig.cs file.
         This handler looks for the API key in the URI query string. 
-        For this example, we assume that the key is a static string. 
+        For this example, Api Key is also defined in global.js and sent with each request. 
         A real implementation would probably use more complex validation.
         If the query string contains the key, the handler passes the request to the inner handler.
         If the request does not have a valid key, the handler creates a response message with status 403, Forbidden. 
@@ -24,99 +26,37 @@ namespace WebApiProject
         nor does the controller. Therefore, the controller can assume that all incoming requests have a valid API key.
         **/
 
-        //public IProvidePrincipal PrincipalProvider { get; set; }
-        //public string Key { get; set; }
-
-        //public ApiKeyHandler(string key)
-        //{
-        //    this.Key = key;
-        //}
         string Key = "AV3xqDcx3txaGAkN";
 
-        protected override Task<HttpResponseMessage> SendAsync(
+        protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            bool good = false;
-
-            AuthenticationHeaderValue authValue = request.Headers.Authorization;
-            if (authValue != null && !String.IsNullOrWhiteSpace(authValue.Parameter))
-            {
-                Credentials parsedCredentials = ParseAuthorizationHeader(authValue.Parameter);
-                good = ValidateKey(parsedCredentials);
-            }
+            bool good = ValidateKey(request);
+            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
             if (!good)
             {
-                var response = new HttpResponseMessage(HttpStatusCode.Forbidden);//Unauthorized
-                var tsc = new TaskCompletionSource<HttpResponseMessage>();
-                tsc.SetResult(response);
-                return tsc.Task;
+                response = request.CreateResponse(HttpStatusCode.Forbidden);
+
+                dynamic jsonOutput = new JObject();
+                jsonOutput.Message = "API Key Required!";
+                jsonOutput.MessageDetail = "Please make sure you specify an API key.";
+                response.Content = new StringContent(jsonOutput.ToString(), Encoding.UTF8, "application/json");
             }
 
             /** continue with the inner handler **/
-            //Thread.CurrentPrincipal = PrincipalProvider.CreatePrincipal(parsedCredentials.Username, parsedCredentials.Password);
-            return base.SendAsync(request, cancellationToken);
+            return response;
         }
 
 
-        private bool ValidateKey(Credentials parsedCredentials)
+        private bool ValidateKey(HttpRequestMessage request)
         {
-            if (parsedCredentials == null)
-            {
-                return false;
-            }
-
-            //var query = message.RequestUri.ParseQueryString();
-            //string key = query["key"];
-            //return (key == Key);
-            return parsedCredentials.Username == Key;
+            var query = request.RequestUri.ParseQueryString(); // message.RequestUri.ParseQueryString();
+            string key = query["key"];
+            return (key == Key);
+            //return parsedCredentials.Username == Key;
         }
 
-
-
-
-        private Credentials ParseAuthorizationHeader(string authHeader)
-        {
-            string[] credentials = Encoding.ASCII.GetString(Convert
-                                                            .FromBase64String(authHeader))
-                                                            .Split(
-                                                            new[] { ':' });
-            if (credentials.Length != 2 || string.IsNullOrEmpty(credentials[0]) || string.IsNullOrEmpty(credentials[1]))
-            { 
-                return null;
-            }
-            return new Credentials()
-            {
-                Username = credentials[0],
-                Password = credentials[1]
-            };
-        }
-        public class Credentials
-        {
-            public string Username { get; set; }
-            public string Password { get; set; }
-        }
-        //public interface IProvidePrincipal
-        //{
-        //    IPrincipal CreatePrincipal(string username, string password);
-        //}
-        //public class DummyPrincipalProvider : IProvidePrincipal
-        //{
-        //    private const string Username = "sarpay@gmail.com";
-        //    private const string Password = "1q2w3e";
-
-        //    public IPrincipal CreatePrincipal(string username, string password)
-        //    {
-        //        if (username != Username || password != Password)
-        //        {
-        //            return null;
-        //        }
-
-        //        var identity = new GenericIdentity(Username);
-        //        IPrincipal principal = new GenericPrincipal(identity, new[] { "User" });
-        //        return principal;
-        //    }
-        //}
     }
 }

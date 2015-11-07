@@ -40,6 +40,7 @@ namespace WebApiProject.Controllers
 
         RETURNS A JObject (using Newtonsoft.Json.Linq)
         **/
+        //[ForceHttps()]
         [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
         [Route("purchases")]
         [HttpPut]
