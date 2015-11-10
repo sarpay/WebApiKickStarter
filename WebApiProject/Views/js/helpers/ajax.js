@@ -4,11 +4,13 @@
 $(document).ajaxStart(function () {
     $.toast().reset('all');
     $('.spinner').show();
+    $('button[type=submit]').hide();
 });
 
 
 $(document).ajaxStop(function () {
     $('.spinner').hide();
+    $('button[type=submit]').show();
 });
 
 

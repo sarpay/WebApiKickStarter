@@ -31,7 +31,6 @@ namespace WebApiProject.Controllers
         //*********************************************
 
         /**
-        [API URI: /GetPurchases]
         [VIEW: /views/purchases.html]
 
         DOES NOT REQUIRE PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
@@ -198,15 +197,16 @@ namespace WebApiProject.Controllers
 
 
         /**
-        [API URI: /new-purchase]
         [VIEW: /views/new-purchase.html]
 
-        DOES NOT REQUIRE PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
+        DOES NOT REQUIRE PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE FORM PARAMS
         BECAUSE [HttpPut] IS NOT COVERED BY THIS CONFIGURATION (commented out line : 87)
         INSTEAD IT ACCEPTS A SINGLE JSON OBJECT THAT HOLDS MULTIPLE PARAMS (using Newtonsoft.Json.Linq)
 
         RETURNS A JObject (using Newtonsoft.Json.Linq)
         **/
+        //[ForceHttps()]
+        [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
         [Route("new-purchase")]
         [HttpPut]
         public JObject NewPurchase(JObject jsonObj)
@@ -271,10 +271,11 @@ namespace WebApiProject.Controllers
         //*********************************************
 
         /**
-        [API URI: /sign-in]
         [VIEW: /views/sign-in.html]
-        REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
-        HttpPost is manipulated by this configuration
+
+        REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE FORM PARAMS
+        HttpPost is manipulated by this configuration (PostParameterBinding.cs)
+
         RETURNS A JObject (using Newtonsoft.Json.Linq)
         **/
         //[ForceHttps()]
@@ -359,11 +360,13 @@ namespace WebApiProject.Controllers
 
 
         /**
-        [API URI: /new-shopper?action=insert]
         [VIEW: /views/new-shopper.html]
-        REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE PARAMS
-        AND RETURNS A CUSTOM LIST ARRAY OBJECT AS JSON
+        - REQUIRES PostParameterBinding.cs CLASS TO ACCEPT MULTIPLE FORM PARAMS 
+            AND RETURNS A CUSTOM LIST ARRAY OBJECT AS JSON.
+        - ALSO ACCEPTS PARAMS FROM THE QueryString (eg: 'action' parameter below).
         **/
+        //[ForceHttps()]
+        [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
         [Route("new-shopper")]
         [HttpPost]
         public object NewShopper(
@@ -473,9 +476,11 @@ namespace WebApiProject.Controllers
         /*********************************************/
 
         /**
-        [API URI: /shoppers?gender_ix=1&opt_in=1&_=1111]
+        [API URI: /shoppers?key=AV3xqDcx3txaGAkN&gender_ix=1&opt_in=1]
         [VIEW: /views/shoppers.html]
         **/
+        //[ForceHttps()]
+        [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
         [Route("shoppers")]
         [HttpGet]
         public IEnumerable<getShoppers> GetShoppersFromView(
@@ -522,9 +527,11 @@ namespace WebApiProject.Controllers
 
 
         /**
-        [API URI: /GetShopperFromView/1]
+        [API URI: /GetShopperFromView/1019/?key=AV3xqDcx3txaGAkN]
         [VIEW: /views/shopper.html]
         **/
+        //[ForceHttps()]
+        [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
         [HttpGet]
         public IEnumerable<getShoppers> GetShopperFromView(
             int id)
@@ -557,25 +564,31 @@ namespace WebApiProject.Controllers
         //*********************************************
 
         /**
-        [API URI: /GetGendersFromTable]
+        [API URI: /GetGendersFromTable/?key=AV3xqDcx3txaGAkN]
         [VIEW: /views/genders.html]
         **/
+        //[ForceHttps()]
+        [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
         [HttpGet]
         public IQueryable<Genders> GetGendersFromTable()
         {
+            //System.Threading.Thread.Sleep(2000);
             return db.Genders;
         }
 
 
         /**
-        [API URI: /GetGenderFromTable/{id}]
+        [API URI: /GetGenderFromTable/{id}/?key=AV3xqDcx3txaGAkN]
         [VIEW: /views/gender.html]
         **/
+        //[ForceHttps()]
+        [Authorize] /** used in conjunction with BasicAuthMessageHandler.cs **/
         [HttpGet]
         [ResponseType(typeof(Genders))]
         public IHttpActionResult GetGenderFromTable(
             byte id)
         {
+            //System.Threading.Thread.Sleep(2000);
             Genders genders = db.Genders.Find(id);
             //if (genders == null)
             //{

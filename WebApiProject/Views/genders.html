@@ -17,9 +17,7 @@
 </head>
 <body>
 
-    <svg class="spinner" viewBox="0 0 100 100" width="20" height="20" style="display: none;">
-        <circle cx="50" cy="50" r="42" transform="rotate(-90,50,50)"></circle>
-    </svg>
+    <span id="spinner-container"></span>
 
     <ul id="genders"></ul>
 
@@ -43,6 +41,14 @@
 
     </div>
 
+    <!-- HTML INCLUDES -->
+    <script>
+        $(function () {
+            $('#spinner-container').load('templates/spinner.html');
+        });
+    </script>
+
+    <!-- APP JS -->
     <script src="js/helpers/ajax.js" type="text/javascript"></script>
     <script src="js/helpers/utils.js" type="text/javascript"></script>
     <script src="js/genders.js" type="text/javascript"></script>

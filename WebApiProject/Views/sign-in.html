@@ -7,7 +7,7 @@
     <link href="css/kendo.common.min.css" rel="stylesheet">
     <link href="css/kendo.silver.min.css" rel="stylesheet">
     <link href="css/kendo.silver.extended.css" rel="stylesheet">
-    <link href="css/jquery.toast.min.css" rel="stylesheet" />
+    <link href="css/jquery.toast.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
 
     <script src="js/lib/jquery-1.10.2.min.js" type="text/javascript"></script>
@@ -16,10 +16,6 @@
 
 </head>
 <body>
-
-    <svg class="spinner" viewBox="0 0 100 100" width="20" height="20" style="display: none;">
-        <circle cx="50" cy="50" r="42" transform="rotate(-90,50,50)"></circle>
-    </svg>
 
     <form id="form" style="margin-bottom: 20px;">
         <h3>SIGN-IN FORM</h3>
@@ -44,14 +40,20 @@
                 <td></td>
                 <td align="center" style="padding-top: 10px;">
                     <button id="submitButton" type="submit" style="width: 100px;">SUBMIT</button>
+                    <span id="spinner-container"></span>
                 </td>
             </tr>
         </table>
     </form>
 
+    <!-- HTML INCLUDES -->
+    <script>$('#spinner-container').load('templates/spinner.html');</script>
+
+    <!-- APP JS -->
     <script src="js/helpers/ajax.js" type="text/javascript"></script>
     <script src="js/helpers/utils.js" type="text/javascript"></script>
     <script src="js/sign-in.js" type="text/javascript"></script>
+    
 
 </body>
 </html>
