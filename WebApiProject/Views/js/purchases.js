@@ -27,9 +27,6 @@ function gridInit(jsonObj) {
 
             read: function (grid) {
 
-                $.toast().reset('all');
-                $('.spinner').show();
-
                 /*** REQUIRES ES6 HARMONY PROMISES ***/
                 //XHR('PUT', 'purchases', 'application/json; charset=utf-8', jsonObj)
                 //.then(
@@ -50,15 +47,14 @@ function gridInit(jsonObj) {
                 //    }
                 //)
                 //.then(
-                //    function () {
-                //        $('.spinner').hide();
-                //    }
+                //    //function () {
+                //    //    $('.spinner').hide();
+                //    //}
                 //);
 
                 var xhrPromise = jqXHR('PUT', 'purchases', 'application/json; charset=utf-8', jsonObj);
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function (response) { /** should always be at the end **/
-                    $('.spinner').hide();
                     grid.success([]); /** stops the loading indicator regardless success/fail **/
                 })
                 .done(function (response) {
@@ -78,7 +74,6 @@ function gridInit(jsonObj) {
                     }
                 })
                 .fail(function (response) { /** make further ui changes on xhr fail **/
-                    $('.spinner').hide();
                     grid.success([]); /** stops the loading indicator regardless success/fail **/
                 });
                 

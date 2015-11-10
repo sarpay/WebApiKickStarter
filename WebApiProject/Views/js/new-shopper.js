@@ -41,14 +41,12 @@ function writeMsg($obj, text) {
 function postData(jsonObj) {
 
     writeMsg($('#json'), JSON.stringify(jsonObj, null, 4));
-
-    $.toast().reset('all');
-    $('.spinner').show();
     
-    var xhrPromise = jqXHR('POST', 'new-shopper?action=insert', 'application/json; charset=utf-8', jsonObj);
+    /*new-shopper method accepts a QS parameter called 'action'*/
+    var xhrPromise = jqXHR('POST', 'new-shopper'/*?action=paramval'*/, 'application/json; charset=utf-8', jsonObj);
     xhrPromise /* promise callbacks are executed in order */
     .always(function (response) {
-        $('.spinner').hide();
+        
     })
     .done(function (response) {
         //console.log(response);

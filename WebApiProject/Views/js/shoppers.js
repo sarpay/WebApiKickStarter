@@ -25,13 +25,9 @@ function gridInit(queryString) {
 
             read: function (grid) {
 
-                $.toast().reset('all');
-                $('.spinner').show();
-
                 var xhrPromise = jqXHR('GET-QS', 'shoppers', 'application/json; charset=utf-8', queryString);
                 xhrPromise /* promise callbacks are executed in order */
                 .always(function (response) {
-                    $('.spinner').hide();
                     grid.success([]); //** stops the loading indicator regardless success/fail
                 })
                 .done(function (response) {

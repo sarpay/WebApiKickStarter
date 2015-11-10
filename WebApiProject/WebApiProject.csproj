@@ -113,6 +113,7 @@
     <Content Include="Views\css\styles.css" />
     <Content Include="Views\css\jquery.toast.css" />
     <Content Include="Views\css\jquery.toast.min.css" />
+    <Content Include="Views\js\helpers\ajax.js" />
     <Content Include="Views\js\new-purchase.js" />
     <Content Include="Views\js\sign-in.js" />
     <Content Include="Views\new-purchase.html" />
@@ -137,7 +138,7 @@
     <Content Include="Views\js\gender.js" />
     <Content Include="Views\js\genders.js" />
     <Content Include="Views\js\shoppers.js" />
-    <Content Include="Views\js\global.js" />
+    <Content Include="Views\js\helpers\utils.js" />
     <Content Include="Views\js\lib\bootstrap.js" />
     <Content Include="Views\js\lib\bootstrap.min.js" />
     <Content Include="Views\fonts\open-sans\OpenSans-Bold.ttf" />

@@ -41,14 +41,11 @@ function writeMsg($obj, text) {
 function postData(jsonObj) {
 
     writeMsg($('#json'), JSON.stringify(jsonObj, null, 4));
-
-    $.toast().reset('all');
-    $('.spinner').show();
     
     var xhrPromise = jqXHR('PUT', 'new-purchase', 'application/json; charset=utf-8', jsonObj);
     xhrPromise /* promise callbacks are executed in order */
     .always(function (response) {
-        $('.spinner').hide();
+        
     })
     .done(function (response) {
         //console.log(response);
