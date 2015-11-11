@@ -3,15 +3,13 @@
 $(document).ajaxStart(function () {
     $.toast().reset('all');
     $('.ui-page').hide();
-    $('.spinner').show();
-    $('button[type=submit]').hide();
+    $('.ui-load-container').show();
 });
 
 
 $(document).ajaxStop(function () {
-    $('.spinner').hide();
+    $('.ui-load-container').hide();
     $('.ui-page').show();
-    $('button[type=submit]').show();
 });
 
 

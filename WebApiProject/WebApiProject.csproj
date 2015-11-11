@@ -166,7 +166,7 @@
     <Content Include="Views\js\lib\modernizr-2.6.2.js" />
     <Content Include="Views\js\nested-calls.js" />
     <Content Include="Views\js\new-shopper.js" />
-    <Content Include="Views\templates\ripple.html" />
+    <Content Include="Views\templates\working.html" />
     <Content Include="Views\templates\spinner.html" />
     <Content Include="Web.config" />
   </ItemGroup>
