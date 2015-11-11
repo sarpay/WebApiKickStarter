@@ -285,7 +285,7 @@ namespace WebApiProject.Controllers
             string username,
             string password)
         {
-            //System.Threading.Thread.Sleep(2000);
+            System.Threading.Thread.Sleep(2000);
             dynamic jsonOutput = new JObject();
 
             /** make modifications on posted data (ready user input for db) **/

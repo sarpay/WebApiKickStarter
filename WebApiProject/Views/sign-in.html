@@ -14,46 +14,62 @@
     <script src="js/lib/kendo.web.min.js" type="text/javascript"></script>
     <script src="js/lib/jquery.toast.min.js" type="text/javascript"></script>
 
+    <style>
+        .spinner {
+            z-index:99;
+            display:none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            overflow: hidden;
+            margin-left: -55px; /*half of width*/
+            margin-top: -20px; /* half of height */
+            height: 40px;
+            width: 110px;
+        }
+    </style>
 </head>
 <body>
 
-    <form id="form" style="margin-bottom: 20px;">
-        <h3>SIGN-IN FORM</h3>
-        <table>
-            <tr>
-                <td><label for="username">Username [username]</label></td>
-                <td>
-                    <input type="email" id="username" name="username" required autofocus />
-                    <div class="req-msg"></div>
-                    <div class="validation-msg"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="password">Password [password]</label></td>
-                <td>
-                    <input type="password" id="password" name="password" required />
-                    <div class="req-msg"></div>
-                    <div class="validation-msg"></div>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td align="center" style="padding-top: 10px;">
-                    <button id="submitButton" type="submit" style="width: 100px;">SUBMIT</button>
-                    <span id="spinner-container"></span>
-                </td>
-            </tr>
-        </table>
-    </form>
+    <div class="spinner"></div>
+
+    <div class="ui-page" style="z-index:1;">
+        <form id="form" style="margin-bottom: 20px;">
+            <h3>SIGN-IN FORM</h3>
+            <table>
+                <tr>
+                    <td><label for="username">Username [username]</label></td>
+                    <td>
+                        <input type="email" id="username" name="username" required autofocus />
+                        <div class="req-msg"></div>
+                        <div class="validation-msg"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="password">Password [password]</label></td>
+                    <td>
+                        <input type="password" id="password" name="password" required />
+                        <div class="req-msg"></div>
+                        <div class="validation-msg"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td align="center" style="padding-top: 10px;">
+                        <button id="submitButton" type="submit" style="width: 100px;">SUBMIT</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
 
     <!-- HTML INCLUDES -->
-    <script>$('#spinner-container').load('templates/spinner.html');</script>
+    <script>$('.spinner').load('templates/ripple.html');</script>
 
     <!-- APP JS -->
     <script src="js/helpers/ajax.js" type="text/javascript"></script>
     <script src="js/helpers/utils.js" type="text/javascript"></script>
     <script src="js/sign-in.js" type="text/javascript"></script>
-    
 
 </body>
 </html>

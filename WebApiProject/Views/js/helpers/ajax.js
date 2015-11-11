@@ -1,8 +1,8 @@
 ﻿var apiKey = 'AV3xqDcx3txaGAkN';
 
-
 $(document).ajaxStart(function () {
     $.toast().reset('all');
+    $('.ui-page').hide();
     $('.spinner').show();
     $('button[type=submit]').hide();
 });
@@ -10,6 +10,7 @@ $(document).ajaxStart(function () {
 
 $(document).ajaxStop(function () {
     $('.spinner').hide();
+    $('.ui-page').show();
     $('button[type=submit]').show();
 });
 
