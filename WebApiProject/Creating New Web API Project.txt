@@ -1,0 +1,7 @@
+1. File > New > Project
+2. Templates > Visual Basic > Web > ASP.NET Web Application
+3. Name Solution & Project Name the same
+4. Check create folder for solution file and click OK
+5. Select an EMPTY template
+6. Add folders and core references for "Web API" (check the box)
+7. Uncheck "Host in the cloud" and click OK
